@@ -25,6 +25,9 @@ public class Note {
 		this.value = value;
 	}
 
+	public Note() {
+		super();
+	}
 	public Note(String name) {
 		super();
 		this.name = name;

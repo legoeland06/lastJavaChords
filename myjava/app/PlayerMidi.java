@@ -5,20 +5,20 @@ import java.util.*;
 
 public class PlayerMidi {
 
-	private Sequencer sequencer;
+	private static Sequencer sequencer;
 	private Sequence sequence;
 	private Integer tempo;
 	private Integer compte = 0;
 	private Track track, trackBasse;
 
 	// TODO : private boolean walking = false;
-	
+
 	public Sequencer getSequencer() {
 		return sequencer;
 	}
 
-	public void setSequencer(Sequencer sequencer) {
-		this.sequencer = sequencer;
+	public void setSequencer(Sequencer s) {
+		sequencer = s;
 	}
 
 	public Sequence getSequence() {
@@ -71,10 +71,11 @@ public class PlayerMidi {
 		this.tempo = leTempo;
 	}
 
-	public void putANote(Track track, boolean played,int valeurNote, Integer tempo, Long _time, long newPos, Integer timming) {
+	public void putANote(Track track, boolean played, int valeurNote, Integer tempo, Long _time, long newPos,
+			Integer timming) {
 		Integer velocite = played ? 100 : 0;
 		try {
-			
+
 			MidiEvent msgOn = this.makeEvent(144, 1, valeurNote + 48, velocite,
 					Math.round(newPos * (60 * 4 / tempo) + 60 * 4 / tempo));
 			MidiEvent msgOff = this.makeEvent(128, 1, valeurNote + 48, velocite,
@@ -88,30 +89,29 @@ public class PlayerMidi {
 	}
 
 	public void stopPlay(Sequencer sequencer) {
-		this.sequencer.stop();
-		this.sequencer.close();
+		sequencer.stop();
+		sequencer.close();
 	}
 
 	public void injectSeq(Grille grilleAccord) {
 		try {
-			this.sequencer = MidiSystem.getSequencer();
-			this.sequencer.open();
+			sequencer = MidiSystem.getSequencer();
+			sequencer.open();
 			this.sequence = new Sequence(Sequence.PPQ, 4);
 			this.tempo = grilleAccord.getTempo();
 
 			// IMPORTANT ICI CREATION DE LA TRACK DES ACCORDS
 			this.track = this.sequence.createTrack();
 
-			this.sequencer.setSequence(this.sequence);
-			
-			this.sequencer.setTempoInBPM(this.tempo);
+			sequencer.setSequence(this.sequence);
+
+			sequencer.setTempoInBPM(this.tempo);
 			// Long deplacementCurseur = 0f;
 			long newPos = 0;
 			for (Chord c : grilleAccord.getContenu()) {
 				List<Integer> valNoteToPlay = c.chordToValues();
 
 				for (int valeur : valNoteToPlay) {
-					// TODO: série de if pour avoir des renversements ou des accord ouverts
 					if (valeur < 4)
 						valeur += 24;
 					if (valeur < 9)
@@ -119,16 +119,16 @@ public class PlayerMidi {
 					if (valeur > 46)
 						valeur -= 12;
 
-					putANote(this.track, c.getPlayed(),valeur, this.tempo, 4l / c.getTime(), newPos, c.getTime());
-					
+					putANote(this.track, c.getPlayed(), valeur, this.tempo, 4l / c.getTime(), newPos, c.getTime());
+
 				}
 				newPos += 8 / c.getTime(); // nouvellePosition;
 			}
 
 			while (true) {
 				// Exit the program when sequencer has stopped playing.
-				if (!this.sequencer.isRunning()) {
-					this.sequencer.stop();
+				if (!sequencer.isRunning()) {
+					sequencer.stop();
 					break;
 				}
 			}
@@ -137,7 +137,7 @@ public class PlayerMidi {
 			e.printStackTrace();
 			System.exit(-1);
 		}
-		this.sequencer.stop();
+	sequencer.stop();
 	}
 
 	public Note iA(Chord c, boolean commeLePrecedent, Chord accSuivant) {
@@ -145,7 +145,7 @@ public class PlayerMidi {
 		Random monRandom = new Random();
 		monRandom.ints(0, 4);
 		Integer valFondAccSuivant = accSuivant.getFondamentale().noteToVal();
-		//Integer valFondAccActuel = Note.noteToVal(c.getFondamental().toString());
+		// Integer valFondAccActuel = Note.noteToVal(c.getFondamental().toString());
 		Boolean commeLeSuivant = c.toString().contentEquals(accSuivant.toString());
 
 		if (c.getTime() == 4 && commeLePrecedent && commeLeSuivant) {
@@ -175,13 +175,13 @@ public class PlayerMidi {
 			// // IMPORTANT ICI CREATION DE LA TRACK DE LA BASSE
 			this.trackBasse = this.sequence.createTrack();
 
-			this.sequencer.setSequence(this.sequence);
+			sequencer.setSequence(this.sequence);
 
-			this.sequencer.setTempoInBPM(this.tempo);
+			sequencer.setTempoInBPM(this.tempo);
 			List<Chord> maListe = grilleAccord.getContenu();
 			long newPos = 0;
 			String sosisse = "";
-			
+
 			List<Chord> list = Collections.synchronizedList(maListe);
 			synchronized (list) {
 				Iterator<Chord> iterator = list.iterator();
@@ -190,17 +190,16 @@ public class PlayerMidi {
 					iterator.next();
 				}
 			}
-			
+
 			Integer cpter = 0;
 			for (Chord c : maListe) {
 
 				Chord accSuivant = maListe.get(cpter);
 				Boolean commeLePrecedent = (c.toString()).contentEquals(sosisse);
-				
 
 				Integer valeur = iA(c, commeLePrecedent, accSuivant).noteToVal();
 
-				putANote(this.trackBasse,true, valeur - 13, this.tempo, 4l / c.getTime(), newPos, c.getTime());
+				putANote(this.trackBasse, true, valeur - 13, this.tempo, 4l / c.getTime(), newPos, c.getTime());
 
 				newPos += 8 / c.getTime(); // nouvellePosition;
 				sosisse = c.toString();
@@ -209,8 +208,8 @@ public class PlayerMidi {
 
 			while (true) {
 				// Exit the program when sequencer has stopped playing.
-				if (!this.sequencer.isRunning()) {
-					this.sequencer.stop();
+				if (!sequencer.isRunning()) {
+					sequencer.stop();
 					break;
 				}
 			}
@@ -224,13 +223,13 @@ public class PlayerMidi {
 
 	public void play() {
 		try {
-			this.sequencer.setSequence(this.sequence);
-			//this.sequencer.setLoopCount(1);
-			this.sequencer.start();
+			sequencer.setSequence(this.sequence);
+			// this.sequencer.setLoopCount(1);
+			sequencer.start();
 			while (true) {
 				// Exit the program when sequencer has stopped playing.
-				if (!this.sequencer.isRunning()) {
-					this.sequencer.stop();
+				if (!sequencer.isRunning()) {
+					sequencer.stop();
 					break;
 				}
 			}

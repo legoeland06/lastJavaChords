@@ -6,9 +6,9 @@ import java.util.List;
 public class Chord {
 
 	private int time = 2;
-	private Note fondamentale = Note.stringToNote("C");
+	private Note fondamentale = new Note();
 	private Quality quality = new Quality();
-	private Note basse = fondamentale;
+	private Note basse = new Note();
 	private int multi=1;
 	private boolean played=true;
 	
@@ -122,7 +122,6 @@ public class Chord {
 			if (ValeurNote < 5) {
 				ValeurNote += 12;
 			}
-			// if (ValeurNote > 60) { ValeurNote -= 12; }
 			componentsOfValues.add(ValeurNote - 1);
 			i++;
 		}
@@ -146,13 +145,13 @@ public class Chord {
 		} else
 			positionDuSlash = 0;
 
-		String basse;
+		Note basse=new Note();
 		String noteFondamentale;
 
 		int longAccordSansTime = AccordSansTime.length(); // longAccordSansTime = 6
 
-		String monTime = c.substring(0, 1);
-		int _time = Integer.parseInt(monTime); // _time = 4
+		int _time = Integer.parseInt(c.substring(0, 1)); // _time = 4
+		this.setTime(_time);
 
 		if (AccordSansTime.length() > 1) {
 			if (((AccordSansTime.substring(0, 2)).indexOf("#") != -1)
@@ -170,35 +169,35 @@ public class Chord {
 			int longnoteFondamentale = noteFondamentale.length();
 
 			if (positionDuSlash != 0) {
-				basse = AccordSansTime.substring(positionDuSlash + 1, longAccordSansTime);
-				longBasse = basse.length();
+				basse = Note.stringToNote(AccordSansTime.substring(positionDuSlash + 1, longAccordSansTime));
+				longBasse = basse.getName().length();
 				_quality = AccordSansTime.substring(longnoteFondamentale, longAccordSansTime - longBasse - 1);
 			} else { // pas de basse
-				basse = "";
+				basse = fondamentale;
 				longBasse = 0;
 				if (longAccordSansTime >= 1) {
 					_quality = AccordSansTime.substring(longnoteFondamentale);
 				} else
-					_quality = "";
+					_quality = " ";
 			}
 
 		} else { // accord simple 4:D
 			noteFondamentale = AccordSansTime;
-			basse = "";
+			basse = Note.stringToNote(noteFondamentale);
 			longBasse = 0;
-			_quality = "";
+			_quality = " ";
 		}
 
-		Chord accParse = new Chord();
-		accParse.setTime(_time);
+		//Chord accParse = new Chord();
+		setTime(_time);
 
-		accParse.setFondamentale(new Note(noteFondamentale));
+		setFondamentale(Note.stringToNote(noteFondamentale));
 
-		accParse.setQuality((_quality == "") ? new Quality("") : new Quality(_quality));
+		setQuality((_quality == "") ? new Quality("") : new Quality(_quality));
 
-		accParse.setBasse((basse == "") ? new Note(noteFondamentale) : new Note(basse));
+		setBasse((basse == null ) ? Note.stringToNote(noteFondamentale) : basse );
 
-		return accParse;
+		return this;
 	}
 
 	public String toString() {
