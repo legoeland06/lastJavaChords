@@ -1,11 +1,12 @@
 package myjava.app;
 
+import java.util.*;
+
 public class Quality {
 
 	private String qualityName;
-	private int[] values;
 
-	private static String[][] _qualitiesStrings = { { "ot", ":" }, { "5", "0:7:12:19:" }, { "no5", "0:4:12:16:" },
+	private static final String[][] _qualitiesStrings = { { "ot", ":" }, { "5", "0:7:12:19:" }, { "no5", "0:4:12:16:" },
 			{ "omit5", "0:4:12:16:" }, { "m(no5)", "0:3:12:15:" }, { "m(omit5)", "0:3:12:15:" }, { " ", "0:4:7:12:" },
 			{ "maj", "0:4:7:12:" }, { "m", "0:3:7:12:" }, { "min", "0:3:7:12:" }, { "-", "0:3:7:12:" },
 			{ "dim", "0:3:6:12:" }, { "(b5)", "0:4:6:12:" }, { "aug", "0:4:8:12:" }, { "sus2", "0:2:7:12:" },
@@ -27,26 +28,27 @@ public class Quality {
 			{ "7#11", "0:4:7:10:18:" }, { "M7+11", "0:4:7:11:18:" }, { "M7#11", "0:4:7:11:18:" },
 			{ "7b9#9", "0:4:7:10:13:15:" }, { "7b9#11", "0:4:7:10:13:18:" }, { "7#9#11", "0:4:7:10:15:18:" },
 			{ "7-13", "0:4:7:10:20:" }, { "7b13", "0:4:7:10:20:" }, { "m7add11", "0:3:7:10:17:" },
-			{ "M7add11", "0:4:7:11:17:" }, { "mM7add11", "0:3:7:11:17:" }, { "7b9b13", "0:4:7:10:13:17:20:" },
+			{ "M7add11", "0:4:7:11:17:" }, { "mM7add11", "0:3:7:11:17:" }, { "7b9b13", "0:4:7:10:13:17:20" },
 			{ "9+11", "0:4:7:10:14:18:" }, { "9#11", "0:4:7:10:14:18:" }, { "13", "0:4:7:10:14:21:" },
 			{ "13-9", "0:4:7:10:13:21:" }, { "13b9", "0:4:7:10:13:21:" }, { "13+9", "0:4:7:10:15:21:" },
 			{ "13#9", "0:4:7:10:15:21:" }, { "13+11", "0:4:7:10:18:21:" }, { "13#11", "0:4:7:10:18:21:" },
 			{ "M7add13", "0:4:7:9:11:14:" } };
 
-	public String getQualityName() {
-		return qualityName;
-	}
+	public static List<Integer> explodeChord(List<Integer> lis) {
+		List<Integer> receptacle = new ArrayList<>();
 
-	public void setQualityName(String qualityName) {
-		this.qualityName = qualityName;
-	}
+		if (lis.size() < 5) {
+			for (Integer item : lis) {
+				receptacle.add(item);
+				receptacle.add(item + 12);
+			}
+			receptacle.sort(Comparator.naturalOrder());
+			Application.prtln(receptacle.toString());
+			return receptacle;
 
-	public int[] getValues() {
-		return values;
-	}
-
-	public void setValues(int[] values) {
-		this.values = values;
+		} else
+			Application.prtln(lis.toString());
+		return lis;
 	}
 
 	public Quality() {
@@ -57,18 +59,43 @@ public class Quality {
 	public Quality(String qualityName) {
 		super();
 		this.qualityName = qualityName;
-		// this.values = values;
 	}
 
-	public Quality(int[] values) {
-		super();
-		// this.qualityName = qualityName;
-		this.values = values;
+	public String getQualityName() {
+		return qualityName;
 	}
 
-	public static String[][] listeQualities() {
+	public void setQualityName(String qualityName) {
+		this.qualityName = qualityName;
+	}
 
-		return _qualitiesStrings;
+	public static List<String> listeQualitiesS() {
+		List<String> receptacleQuality = new ArrayList<>();
+		for (String[] quali : _qualitiesStrings) {
+			receptacleQuality.add(quali[0]);
+		}
+		return receptacleQuality;
+	}
+
+	public static List<String> listeQualitiesQ() {
+		List<String> receptacle = new ArrayList<>();
+		for (String[] quali : _qualitiesStrings) {
+			receptacle.add(quali[0]);
+		}
+		return receptacle;
+	}
+
+	public static List<String> listeQualitiesT() {
+		List<String> receptacle = new ArrayList<>();
+		for (String[] quali : _qualitiesStrings) {
+			receptacle.add(quali[1]);
+		}
+		return receptacle;
+	}
+
+	@Override
+	public String toString() {
+		return qualityName;
 	}
 
 }
