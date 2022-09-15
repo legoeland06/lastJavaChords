@@ -2,6 +2,10 @@ package myjava.app;
 
 import java.util.*;
 
+/**
+ * @author ericbruneau
+ *
+ */
 public class Quality {
 
 	private String qualityName;
@@ -34,14 +38,19 @@ public class Quality {
 			{ "13#9", "0:4:7:10:15:21:" }, { "13+11", "0:4:7:10:18:21:" }, { "13#11", "0:4:7:10:18:21:" },
 			{ "M7add13", "0:4:7:9:11:14:" } };
 
+	/**
+	 * @param lis
+	 * @return une liste plus explosée des ecarts dans les notes de l'accord
+	 */
 	public static List<Integer> explodeChord(List<Integer> lis) {
 		List<Integer> receptacle = new ArrayList<>();
 
 		if (lis.size() < 5) {
-			for (Integer item : lis) {
+			lis.stream().map(c -> c - 12).toList().forEach(item -> {
 				receptacle.add(item);
 				receptacle.add(item + 12);
-			}
+			});
+
 			receptacle.sort(Comparator.naturalOrder());
 			Application.prtln(receptacle.toString());
 			return receptacle;
@@ -51,25 +60,50 @@ public class Quality {
 		return lis;
 	}
 
+	/**
+	 * Constructeur vide
+	 */
 	public Quality() {
 		super();
 		this.setQualityName("");
 	}
 
+	/**
+	 * @param qualityName
+	 */
 	public Quality(String qualityName) {
 		super();
 		this.qualityName = qualityName;
 	}
 
+	/**
+	 * @return qualityName
+	 */
 	public String getQualityName() {
 		return qualityName;
 	}
 
+	/**
+	 * @param qualityName
+	 */
 	public void setQualityName(String qualityName) {
 		this.qualityName = qualityName;
 	}
 
-	public static List<String> listeQualitiesS() {
+	/**
+	 * @return Optional<List<String>>
+	 */
+	public static Optional<List<String>> listeQualitiesNameSorted() {
+		List<String> listeSorted = new ArrayList<>();
+		listeSorted = listeQualitiesName().stream().sorted(Comparator.naturalOrder()).toList();
+		return Optional.of(listeSorted);
+	}
+
+	/**
+	 * @return ListeQualitiesName (nom des qualités) correspond au champs de gauche
+	 *         de la liste principale.
+	 */
+	public static List<String> listeQualitiesName() {
 		List<String> receptacleQuality = new ArrayList<>();
 		for (String[] quali : _qualitiesStrings) {
 			receptacleQuality.add(quali[0]);
@@ -77,15 +111,12 @@ public class Quality {
 		return receptacleQuality;
 	}
 
-	public static List<String> listeQualitiesQ() {
-		List<String> receptacle = new ArrayList<>();
-		for (String[] quali : _qualitiesStrings) {
-			receptacle.add(quali[0]);
-		}
-		return receptacle;
-	}
-
-	public static List<String> listeQualitiesT() {
+	/**
+	 * @return listeQualitiesEcart (ecart entre les notes par rapport à la qualités
+	 *         de l'accord donné en parametre) correspond au champs de droite de la
+	 *         liste principale.
+	 */
+	public static List<String> listeQualitiesEcart() {
 		List<String> receptacle = new ArrayList<>();
 		for (String[] quali : _qualitiesStrings) {
 			receptacle.add(quali[1]);
