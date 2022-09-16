@@ -162,7 +162,7 @@ public class PlayerMidi {
 			List<Chord> maListe = grilleAccord.getContenu();
 			for (int f = 0; f < maListe.size(); f++) {
 				Chord accEnCours = maListe.get(f);
-				Chord accSuivant = f == maListe.size() - 1 ? maListe.get(0) : maListe.get(f + 1);
+				// Chord accSuivant = f == maListe.size() - 1 ? maListe.get(0) : maListe.get(f + 1);
 				Chord accPrecedent = f > 0 ? maListe.get(f - 1) : maListe.get(maListe.size() - 1);
 				Boolean commeLePrecedent = (accEnCours.getFondamentale().getName()
 						+ accEnCours.getQuality().getQualityName() + accEnCours.getBasse().getName())
@@ -297,14 +297,14 @@ public class PlayerMidi {
 			List<Chord> maListe = grilleAccord.getContenu();
 			float newPos = 0;
 
-			for (int increment = 0; increment < maListe.size(); increment++) {
-				Chord accEnCours = maListe.get(increment);
-				Chord accSuivant = increment == maListe.size() - 1 ? maListe.get(0) : maListe.get(increment + 1);
-				Chord accPrecedent = increment > 0 ? maListe.get(increment - 1) : maListe.get(maListe.size() - 1);
-				Integer valeur = iA(increment, accEnCours, accPrecedent, accSuivant);
+			for (int i = 0; i < maListe.size(); i++) {
+				Chord accEnCours = maListe.get(i);
+				Chord accSuivant = i == maListe.size() - 1 ? maListe.get(0) : maListe.get(i + 1);
+				Chord accPrecedent = i > 0 ? maListe.get(i - 1) : maListe.get(maListe.size() - 1);
+				Integer valeur = iA(i, accEnCours, accPrecedent, accSuivant);
 				putANote(this.trackBasse, 7, 100, true, valeur, 4l / accEnCours.getTime(), newPos,
 						accEnCours.getTime());
-				Application.prt("valeur après iA() = " + valeur + " incrément = " + increment + "\n");
+				Application.prt("valeur après iA() = " + valeur + " incrément = " + i + "\n");
 				newPos += 8l / accEnCours.getTime();
 			}
 

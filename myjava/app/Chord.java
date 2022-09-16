@@ -107,7 +107,7 @@ public final class Chord implements Transposable<Chord>{
 	}
 
 	/**
-	 * @return int
+	 * @return this.multi;
 	 */
 	public int getMulti() {
 		return this.multi;
