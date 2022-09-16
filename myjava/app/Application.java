@@ -1,12 +1,15 @@
 package myjava.app;
 
 import java.util.Scanner;
+import java.util.function.Consumer;
 
 /**
- * @author ericbruneau
+ * @author Eric Bruneau
  *
  */
 public class Application {
+
+	// Consumer<T> pln = new Consumer(u)->System.out.print(u.toString());
 
 	/**
 	 * 
@@ -14,6 +17,10 @@ public class Application {
 	public static int count = 0;
 
 	/**
+	 * méthode qui écrit sur la ligne et incrémente un compteur utilité : pouvoir
+	 * aligner un certain nombre d'objets sur une ligne et prévoir un retour à la
+	 * ligne au bout de n fois
+	 * 
 	 * @param string
 	 * @return count incremented
 	 */
@@ -25,9 +32,13 @@ public class Application {
 
 	/**
 	 * @param stringOut
-	 * @return count not incremented
+	 * @return count but not incremented
 	 */
 	public static Integer prtln(String stringOut) {
+		if (stringOut == "-") {
+			System.out.println("\n--------------------------------------------------------");
+			return count;
+		}
 		System.out.println(stringOut);
 		return count;
 	}
@@ -39,19 +50,20 @@ public class Application {
 
 		prtln("Entrez les accords sous la forme 2:Cm7b5/C 2:Cm7b5/C ... :");
 		prtln("Séparés par des espaces");
-		
+
 		Chord myAccord = new Chord();
 		myAccord.parseToChord("Cm7b5");
-		myAccord.chordToComponents().forEach(c->prt(c.toString()));
+		myAccord.chordToComponents().forEach(c -> prt(c.toString()));
 
+		prtln("-");
 		Scanner quest = new Scanner(System.in);
 		Grille grille = new Grille();
 
-		String repString = "2:BM7 2:D7 2:GM7 2:Bb7 4:EbM7X4 4:Am7X2 4:D7X2 2:GM7 2:Bb7 2:EbM7 2:F#7 4:BM7X4 4:Fm7X2 4:Bb7X2 4:EbM7X4 4:Am7X2 4:D7X2 4:GM7X4 4:C#m7X2 4:F#7X2 4:BM7X4 4:Fm7X2 4:Bb7X2 4:EbM7X4 8:C#m7 4:C#ot 8:C#m7 2:C#ot 2:BM7 2:D7 2:GM7 2:Bb7 4:EbM7X4 4:Am7X2 4:D7X2 2:GM7 2:Bb7 2:EbM7 2:F#7 4:BM7X4 4:Fm7X2 4:Bb7X2 4:EbM7X4 4:Am7X2 4:D7X2 4:GM7X4 4:C#m7X2 4:F#7X2 4:BM7X4 4:Fm7X2 4:Bb7X2 4:EbM7X4 8:C#m7 4:C#ot 8:C#m7 2:C#ot 2:BM7 2:D7 2:GM7 2:Bb7 4:EbM7X4 4:Am7X2 4:D7X2 2:GM7 2:Bb7 2:EbM7 2:F#7 4:BM7X4 4:Fm7X2 4:Bb7X2 4:EbM7X4 4:Am7X2 4:D7X2 4:GM7X4 4:C#m7X2 4:F#7X2 4:BM7X4 4:Fm7X2 4:Bb7X2 4:EbM7X4 8:C#m7 4:C#ot 8:C#m7 2:C#ot 2:BM7 2:D7 2:GM7 2:Bb7 4:EbM7X4 4:Am7X2 4:D7X2 2:GM7 2:Bb7 2:EbM7 2:F#7 4:BM7X4 4:Fm7X2 4:Bb7X2 4:EbM7X4 4:Am7X2 4:D7X2 4:GM7X4 4:C#m7X2 4:F#7X2 4:BM7X4 4:Fm7X2 4:Bb7X2 4:EbM7X4 8:C#m7 4:C#ot 8:C#m7 2:C#ot 2:BM7 2:D7 2:GM7 2:Bb7 4:EbM7X4 4:Am7X2 4:D7X2 2:GM7 2:Bb7 2:EbM7 2:F#7 4:BM7X4 4:Fm7X2 4:Bb7X2 4:EbM7X4 4:Am7X2 4:D7X2 4:GM7X4 4:C#m7X2 4:F#7X2 4:BM7X4 4:Fm7X2 4:Bb7X2 4:EbM7X4 8:C#m7 4:C#ot 8:C#m7 2:C#ot 2:BM7 2:D7 2:GM7 2:Bb7 4:EbM7X4 4:Am7X2 4:D7X2 2:GM7 2:Bb7 2:EbM7 2:F#7 4:BM7X4 4:Fm7X2 4:Bb7X2 4:EbM7X4 4:Am7X2 4:D7X2 4:GM7X4 4:C#m7X2 4:F#7X2 4:BM7X4 4:Fm7X2 4:Bb7X2 4:EbM7X4 8:C#m7 4:C#ot 8:C#m7 2:C#ot 2:BM7 2:D7 2:GM7 2:Bb7 4:EbM7X4 4:Am7X2 4:D7X2 2:GM7 2:Bb7 2:EbM7 2:F#7 4:BM7X4 4:Fm7X2 4:Bb7X2 4:EbM7X4 4:Am7X2 4:D7X2 4:GM7X4 4:C#m7X2 4:F#7X2 4:BM7X4 4:Fm7X2 4:Bb7X2 4:EbM7X4 8:C#m7 4:C#ot 8:C#m7 2:C#ot 2:BM7 2:D7 2:GM7 2:Bb7 4:EbM7X4 4:Am7X2 4:D7X2 2:GM7 2:Bb7 2:EbM7 2:F#7 4:BM7X4 4:Fm7X2 4:Bb7X2 4:EbM7X4 4:Am7X2 4:D7X2 4:GM7X4 4:C#m7X2 4:F#7X2 4:BM7X4 4:Fm7X2 4:Bb7X2 4:EbM7X4 8:C#m7 4:C#ot 8:C#m7 2:C#ot";
+		//String repString = "2:BM7 2:D7 2:GM7 2:Bb7 4:EbM7X4 4:Am7X2 4:D7X2 2:GM7 2:Bb7 2:EbM7 2:F#7 4:BM7X4 4:Fm7X2 4:Bb7X2 4:EbM7X4 4:Am7X2 4:D7X2 4:GM7X4 4:C#m7X2 4:F#7X2 4:BM7X4 4:Fm7X2 4:Bb7X2 4:EbM7X4 8:C#m7 4:C#ot 8:C#m7 2:C#ot 2:BM7 2:D7 2:GM7 2:Bb7 4:EbM7X4 4:Am7X2 4:D7X2 2:GM7 2:Bb7 2:EbM7 2:F#7 4:BM7X4 4:Fm7X2 4:Bb7X2 4:EbM7X4 4:Am7X2 4:D7X2 4:GM7X4 4:C#m7X2 4:F#7X2 4:BM7X4 4:Fm7X2 4:Bb7X2 4:EbM7X4 8:C#m7 4:C#ot 8:C#m7 2:C#ot 2:BM7 2:D7 2:GM7 2:Bb7 4:EbM7X4 4:Am7X2 4:D7X2 2:GM7 2:Bb7 2:EbM7 2:F#7 4:BM7X4 4:Fm7X2 4:Bb7X2 4:EbM7X4 4:Am7X2 4:D7X2 4:GM7X4 4:C#m7X2 4:F#7X2 4:BM7X4 4:Fm7X2 4:Bb7X2 4:EbM7X4 8:C#m7 4:C#ot 8:C#m7 2:C#ot 2:BM7 2:D7 2:GM7 2:Bb7 4:EbM7X4 4:Am7X2 4:D7X2 2:GM7 2:Bb7 2:EbM7 2:F#7 4:BM7X4 4:Fm7X2 4:Bb7X2 4:EbM7X4 4:Am7X2 4:D7X2 4:GM7X4 4:C#m7X2 4:F#7X2 4:BM7X4 4:Fm7X2 4:Bb7X2 4:EbM7X4 8:C#m7 4:C#ot 8:C#m7 2:C#ot 2:BM7 2:D7 2:GM7 2:Bb7 4:EbM7X4 4:Am7X2 4:D7X2 2:GM7 2:Bb7 2:EbM7 2:F#7 4:BM7X4 4:Fm7X2 4:Bb7X2 4:EbM7X4 4:Am7X2 4:D7X2 4:GM7X4 4:C#m7X2 4:F#7X2 4:BM7X4 4:Fm7X2 4:Bb7X2 4:EbM7X4 8:C#m7 4:C#ot 8:C#m7 2:C#ot 2:BM7 2:D7 2:GM7 2:Bb7 4:EbM7X4 4:Am7X2 4:D7X2 2:GM7 2:Bb7 2:EbM7 2:F#7 4:BM7X4 4:Fm7X2 4:Bb7X2 4:EbM7X4 4:Am7X2 4:D7X2 4:GM7X4 4:C#m7X2 4:F#7X2 4:BM7X4 4:Fm7X2 4:Bb7X2 4:EbM7X4 8:C#m7 4:C#ot 8:C#m7 2:C#ot 2:BM7 2:D7 2:GM7 2:Bb7 4:EbM7X4 4:Am7X2 4:D7X2 2:GM7 2:Bb7 2:EbM7 2:F#7 4:BM7X4 4:Fm7X2 4:Bb7X2 4:EbM7X4 4:Am7X2 4:D7X2 4:GM7X4 4:C#m7X2 4:F#7X2 4:BM7X4 4:Fm7X2 4:Bb7X2 4:EbM7X4 8:C#m7 4:C#ot 8:C#m7 2:C#ot 2:BM7 2:D7 2:GM7 2:Bb7 4:EbM7X4 4:Am7X2 4:D7X2 2:GM7 2:Bb7 2:EbM7 2:F#7 4:BM7X4 4:Fm7X2 4:Bb7X2 4:EbM7X4 4:Am7X2 4:D7X2 4:GM7X4 4:C#m7X2 4:F#7X2 4:BM7X4 4:Fm7X2 4:Bb7X2 4:EbM7X4 8:C#m7 4:C#ot 8:C#m7 2:C#ot";
 
-		MyInterface myInterface = (int a, String b) -> String.valueOf(a + Integer.parseInt(b));
-		prt(myInterface.affiche(2, "7"));
-		
+//		MyInterface myInterface = (int a, String b) -> String.valueOf(a + Integer.parseInt(b));
+//		prt(myInterface.affiche(2, "7"));
+
 		String[] rep = quest.nextLine().split(" ");
 
 		for (String elem : rep) {
@@ -84,8 +96,8 @@ public class Application {
 					count--;
 				}
 			});
-		
-			grille.getContenu().forEach(g->prt(g.toString()+" "));
+
+			grille.getContenu().forEach(g -> prt(g.toString() + " "));
 
 			pl.injectSeq(grille);
 			pl.injectBasse(grille);
