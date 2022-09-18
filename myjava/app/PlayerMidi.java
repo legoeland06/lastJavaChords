@@ -139,8 +139,7 @@ public class PlayerMidi {
 	}
 
 	/**
-	 * @param grilleAccord
-	 * Injecteur de sequence piano accord
+	 * @param grilleAccord Injecteur de sequence piano accord
 	 */
 	public void injectSeq(Grille grilleAccord) {
 
@@ -162,16 +161,17 @@ public class PlayerMidi {
 			List<Chord> maListe = grilleAccord.getContenu();
 			for (int f = 0; f < maListe.size(); f++) {
 				Chord accEnCours = maListe.get(f);
-				// Chord accSuivant = f == maListe.size() - 1 ? maListe.get(0) : maListe.get(f + 1);
+				// Chord accSuivant = f == maListe.size() - 1 ? maListe.get(0) : maListe.get(f +
+				// 1);
 				Chord accPrecedent = f > 0 ? maListe.get(f - 1) : maListe.get(maListe.size() - 1);
 				Boolean commeLePrecedent = (accEnCours.getFondamentale().getName()
 						+ accEnCours.getQuality().getQualityName() + accEnCours.getBasse().getName())
 						.contentEquals(accPrecedent.getFondamentale().getName()
 								+ accPrecedent.getQuality().getQualityName() + accPrecedent.getBasse().getName());
-				accEnCours.setPlayed((!commeLePrecedent) || f % Math.round(Math.random() * 8 + 1) == 0);
+				accEnCours.setPlayed((!commeLePrecedent) || f % Math.round(Math.random() * 21 + 1) == 0);
 				if (accEnCours.isPlayed()) {
 
-					List<Integer> valNoteToPlay = Quality.explodeChord(accEnCours.chordToValues());
+					List<Integer> valNoteToPlay = Harmonie.explodeChord(Harmonie.chordToValues(accEnCours));
 					valNoteToPlay.forEach((v) -> {
 						if (v <= 12)
 							v += 24;
@@ -231,10 +231,10 @@ public class PlayerMidi {
 	 * @param c
 	 * @param accPrecedant
 	 * @param accSuivant
-	 * @return Integer : la note envoyée est faite après passage par
-	 * cette méthode
-	 * <pre>
-	 * {@code
+	 * @return Integer : la note envoyée est faite après passage par cette méthode
+	 * 
+	 *         <pre>
+	 *         {@code
 		 * Integer alea = (int) Math.random() * (16) + 1;
 		 * Integer alea2 = (int) Math.random() * (4) + 1;
 		 * List<Integer> valeur = c.chordToValues();
@@ -243,46 +243,49 @@ public class PlayerMidi {
 		 * if (c.getTime() == 4 && !c.isPlayed()) {
 		 * 	  if ((compte % (4 * alea)) == 1) {
 		 * 		 return this.encadreValeurBasse(valeur.get(0) + 2);
-		 * 	  } else if ((compte % (4 * alea)) == 2) {
-		 * 			return this.encadreValeurBasse(valeur.get(1));
-		 * 	  }
-		 * 	  if (compte%(8*alea2)==3) {
-		 * 		 return this.encadreValeurBasse(Note.noteToVal(c.getFondamentale())-1);
-		 * 	  } else if ((compte % (4 * alea)) == 3) {
-		 * 			return this.encadreValeurBasse(valeur.get(2));
-		 * 	  }
-		 * int valGet = compte > alea2 ? (compte - alea2) : (alea2 - compte);
-		 * }
-		 * return Note.noteToVal(c.getFondamentale());
-		}</pre>
+	 *         } else if ((compte % (4 * alea)) == 2) {
+	 *         return this.encadreValeurBasse(valeur.get(1));
+	 *         }
+	 *         if (compte % (8 * alea2) == 3) {
+	 *         return this.encadreValeurBasse(Note.noteToVal(c.getFondamentale()) - 1);
+	 *         } else if ((compte % (4 * alea)) == 3) {
+	 *         return this.encadreValeurBasse(valeur.get(2));
+	 *         }
+	 *         int valGet = compte > alea2 ? (compte - alea2) : (alea2 - compte);
+	 *         }
+	 *         return Note.noteToVal(c.getFondamentale());
+	 *         }
+	 *         </pre>
 	 */
 	public Integer iA(int compte, Chord c, Chord accPrecedant, Chord accSuivant) {
 
 		Integer alea = (int) Math.random() * (16) + 1;
-		Integer alea2 = (int) Math.random() * (4) + 1;
-		List<Integer> valeur = c.chordToValues();
-		compte %= 16;
+		Integer alea2 = (int) Math.round(Math.random() * 7 + 1);
+		List<Integer> valeur = Harmonie.chordToValues(c);
+		compte = compte % 64;
 		Application.prt(" || compte = " + String.valueOf(compte) + " || ");
 		if (c.getTime() == 4 && !c.isPlayed()) {
-			if ((compte % (4 * alea)) == 1) {
-				return this.encadreValeurBasse(valeur.get(0) + 2);
-			} else if ((compte % (4 * alea)) == 2) {
-				return this.encadreValeurBasse(valeur.get(1));
-			}
-			if (compte%(8*alea2)==3) {
-				return this.encadreValeurBasse(Note.noteToVal(c.getFondamentale())-1);
-			} else if ((compte % (4 * alea)) == 3) {
-				return this.encadreValeurBasse(valeur.get(2));
+			if ((compte % (alea2)) == 1) {
+				return this.encadreValeurBasse(Harmonie.noteToVal(c.getSecondInChord()));
+			} else if ((compte % (alea2)) == 2) {
+				return this.encadreValeurBasse(Harmonie.noteToVal(c.getTierce()));
+			} else if (compte % (8 * alea2) == 3) {
+				return this.encadreValeurBasse(Harmonie.noteToVal(c.getSecondInChord()));
+			} else if ((compte % (alea2)) == 4) {
+				return this.encadreValeurBasse(Harmonie.noteToVal(c.getTierce()));
 			}
 			int valGet = compte > alea2 ? (compte - alea2) : (alea2 - compte);
-			return this.encadreValeurBasse(valeur.get(valGet != 0 ? (valeur.size() - 1) % valGet : valGet - 1));
+			return this.encadreValeurBasse(valeur.get(valGet != 0 ? valGet % valeur.size() : valGet));
 		}
-		return Note.noteToVal(c.getFondamentale());
+		Application.printLigne();
+		Application.prt(
+				Harmonie.noteToVal(Harmonie.chordToComponents(c).get(compte % Harmonie.chordToComponents(c).size())));
+
+		return Harmonie.noteToVal(Harmonie.chordToComponents(c).get(compte % Harmonie.chordToComponents(c).size()));
 	}
 
 	/**
-	 * @param grilleAccord
-	 * Injection de la track de basse
+	 * @param grilleAccord Injection de la track de basse
 	 * @see #iA(int, Chord, Chord, Chord)
 	 */
 	public void injectBasse(Grille grilleAccord) {

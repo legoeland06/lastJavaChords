@@ -15,6 +15,9 @@ public class Application {
 	 * 
 	 */
 	public static int count = 0;
+	private static char LINE = '-';
+		
+	
 
 	/**
 	 * méthode qui écrit sur la ligne et incrémente un compteur utilité : pouvoir
@@ -24,23 +27,30 @@ public class Application {
 	 * @param string
 	 * @return count incremented
 	 */
-	public static Integer prt(String string) {
-		System.out.print(string);
+	public static Integer prt(Object objectToStringOut) {
+		System.out.print((String) String.valueOf(objectToStringOut));
 		count++;
 		return count;
 	}
 
 	/**
-	 * @param stringOut
-	 * @return count but not incremented
+	 * Affiche une ligne en sortie de console
 	 */
-	public static Integer prtln(String stringOut) {
-		if (stringOut == "-") {
+	public static void printLigne() {
+		prtln(LINE);
+	}
+	/**
+	 * @param stringOut
+	 * @return count but not incremented Affiche une ligne de séparation si "-" est
+	 *         donné en paramètre
+	 */
+	public static void prtln(Object objectToStringOut) {
+		if (
+				( (String) String.valueOf(objectToStringOut) ).contentEquals(String.valueOf(LINE))) {
 			System.out.println("\n--------------------------------------------------------");
-			return count;
+			return;
 		}
-		System.out.println(stringOut);
-		return count;
+		System.out.println((String) String.valueOf(objectToStringOut));
 	}
 
 	/**
@@ -48,30 +58,52 @@ public class Application {
 	 */
 	public static void main(String[] args) {
 
-		prtln("Entrez les accords sous la forme 2:Cm7b5/C 2:Cm7b5/C ... :");
-		prtln("Séparés par des espaces");
+//		prtln("Entrez les accords sous la forme 2:Cm7b5/CX4 ou AmX2 ou juste F ... :");
+//		prtln("Séparés par des espaces");
+		prtln("Entrez un accords ou une suite d'accords...");
 
-		Chord myAccord = new Chord();
-		myAccord.parseToChord("Cm7b5");
-		myAccord.chordToComponents().forEach(c -> prt(c.toString()));
+//		Chord myAccord = new Chord();
+//		myAccord.parseToChord("Cm7b5");
+//		myAccord.chordToComponents().forEach(c -> prt(c.toString()));
 
-		prtln("-");
+		prtln(LINE);
 		Scanner quest = new Scanner(System.in);
 		Grille grille = new Grille();
-
-		//String repString = "2:BM7 2:D7 2:GM7 2:Bb7 4:EbM7X4 4:Am7X2 4:D7X2 2:GM7 2:Bb7 2:EbM7 2:F#7 4:BM7X4 4:Fm7X2 4:Bb7X2 4:EbM7X4 4:Am7X2 4:D7X2 4:GM7X4 4:C#m7X2 4:F#7X2 4:BM7X4 4:Fm7X2 4:Bb7X2 4:EbM7X4 8:C#m7 4:C#ot 8:C#m7 2:C#ot 2:BM7 2:D7 2:GM7 2:Bb7 4:EbM7X4 4:Am7X2 4:D7X2 2:GM7 2:Bb7 2:EbM7 2:F#7 4:BM7X4 4:Fm7X2 4:Bb7X2 4:EbM7X4 4:Am7X2 4:D7X2 4:GM7X4 4:C#m7X2 4:F#7X2 4:BM7X4 4:Fm7X2 4:Bb7X2 4:EbM7X4 8:C#m7 4:C#ot 8:C#m7 2:C#ot 2:BM7 2:D7 2:GM7 2:Bb7 4:EbM7X4 4:Am7X2 4:D7X2 2:GM7 2:Bb7 2:EbM7 2:F#7 4:BM7X4 4:Fm7X2 4:Bb7X2 4:EbM7X4 4:Am7X2 4:D7X2 4:GM7X4 4:C#m7X2 4:F#7X2 4:BM7X4 4:Fm7X2 4:Bb7X2 4:EbM7X4 8:C#m7 4:C#ot 8:C#m7 2:C#ot 2:BM7 2:D7 2:GM7 2:Bb7 4:EbM7X4 4:Am7X2 4:D7X2 2:GM7 2:Bb7 2:EbM7 2:F#7 4:BM7X4 4:Fm7X2 4:Bb7X2 4:EbM7X4 4:Am7X2 4:D7X2 4:GM7X4 4:C#m7X2 4:F#7X2 4:BM7X4 4:Fm7X2 4:Bb7X2 4:EbM7X4 8:C#m7 4:C#ot 8:C#m7 2:C#ot 2:BM7 2:D7 2:GM7 2:Bb7 4:EbM7X4 4:Am7X2 4:D7X2 2:GM7 2:Bb7 2:EbM7 2:F#7 4:BM7X4 4:Fm7X2 4:Bb7X2 4:EbM7X4 4:Am7X2 4:D7X2 4:GM7X4 4:C#m7X2 4:F#7X2 4:BM7X4 4:Fm7X2 4:Bb7X2 4:EbM7X4 8:C#m7 4:C#ot 8:C#m7 2:C#ot 2:BM7 2:D7 2:GM7 2:Bb7 4:EbM7X4 4:Am7X2 4:D7X2 2:GM7 2:Bb7 2:EbM7 2:F#7 4:BM7X4 4:Fm7X2 4:Bb7X2 4:EbM7X4 4:Am7X2 4:D7X2 4:GM7X4 4:C#m7X2 4:F#7X2 4:BM7X4 4:Fm7X2 4:Bb7X2 4:EbM7X4 8:C#m7 4:C#ot 8:C#m7 2:C#ot 2:BM7 2:D7 2:GM7 2:Bb7 4:EbM7X4 4:Am7X2 4:D7X2 2:GM7 2:Bb7 2:EbM7 2:F#7 4:BM7X4 4:Fm7X2 4:Bb7X2 4:EbM7X4 4:Am7X2 4:D7X2 4:GM7X4 4:C#m7X2 4:F#7X2 4:BM7X4 4:Fm7X2 4:Bb7X2 4:EbM7X4 8:C#m7 4:C#ot 8:C#m7 2:C#ot 2:BM7 2:D7 2:GM7 2:Bb7 4:EbM7X4 4:Am7X2 4:D7X2 2:GM7 2:Bb7 2:EbM7 2:F#7 4:BM7X4 4:Fm7X2 4:Bb7X2 4:EbM7X4 4:Am7X2 4:D7X2 4:GM7X4 4:C#m7X2 4:F#7X2 4:BM7X4 4:Fm7X2 4:Bb7X2 4:EbM7X4 8:C#m7 4:C#ot 8:C#m7 2:C#ot";
+		Chord receptacle;
+		// String repString = "2:BM7 2:D7 2:GM7 2:Bb7 4:EbM7X4 4:Am7X2 4:D7X2 2:GM7
+		// 2:Bb7 2:EbM7 2:F#7 4:BM7X4 4:Fm7X2 4:Bb7X2 4:EbM7X4 4:Am7X2 4:D7X2 4:GM7X4
+		// 4:C#m7X2 4:F#7X2 4:BM7X4 4:Fm7X2 4:Bb7X2 4:EbM7X4 8:C#m7 4:C#ot 8:C#m7 2:C#ot
+		// 2:BM7 2:D7 2:GM7 2:Bb7 4:EbM7X4 4:Am7X2 4:D7X2 2:GM7 2:Bb7 2:EbM7 2:F#7
+		// 4:BM7X4 4:Fm7X2 4:Bb7X2 4:EbM7X4 4:Am7X2 4:D7X2 4:GM7X4 4:C#m7X2 4:F#7X2
+		// 4:BM7X4 4:Fm7X2 4:Bb7X2 4:EbM7X4 8:C#m7 4:C#ot 8:C#m7 2:C#ot 2:BM7 2:D7 2:GM7
+		// 2:Bb7 4:EbM7X4 4:Am7X2 4:D7X2 2:GM7 2:Bb7 2:EbM7 2:F#7 4:BM7X4 4:Fm7X2
+		// 4:Bb7X2 4:EbM7X4 4:Am7X2 4:D7X2 4:GM7X4 4:C#m7X2 4:F#7X2 4:BM7X4 4:Fm7X2
+		// 4:Bb7X2 4:EbM7X4 8:C#m7 4:C#ot 8:C#m7 2:C#ot 2:BM7 2:D7 2:GM7 2:Bb7 4:EbM7X4
+		// 4:Am7X2 4:D7X2 2:GM7 2:Bb7 2:EbM7 2:F#7 4:BM7X4 4:Fm7X2 4:Bb7X2 4:EbM7X4
+		// 4:Am7X2 4:D7X2 4:GM7X4 4:C#m7X2 4:F#7X2 4:BM7X4 4:Fm7X2 4:Bb7X2 4:EbM7X4
+		// 8:C#m7 4:C#ot 8:C#m7 2:C#ot 2:BM7 2:D7 2:GM7 2:Bb7 4:EbM7X4 4:Am7X2 4:D7X2
+		// 2:GM7 2:Bb7 2:EbM7 2:F#7 4:BM7X4 4:Fm7X2 4:Bb7X2 4:EbM7X4 4:Am7X2 4:D7X2
+		// 4:GM7X4 4:C#m7X2 4:F#7X2 4:BM7X4 4:Fm7X2 4:Bb7X2 4:EbM7X4 8:C#m7 4:C#ot
+		// 8:C#m7 2:C#ot 2:BM7 2:D7 2:GM7 2:Bb7 4:EbM7X4 4:Am7X2 4:D7X2 2:GM7 2:Bb7
+		// 2:EbM7 2:F#7 4:BM7X4 4:Fm7X2 4:Bb7X2 4:EbM7X4 4:Am7X2 4:D7X2 4:GM7X4 4:C#m7X2
+		// 4:F#7X2 4:BM7X4 4:Fm7X2 4:Bb7X2 4:EbM7X4 8:C#m7 4:C#ot 8:C#m7 2:C#ot 2:BM7
+		// 2:D7 2:GM7 2:Bb7 4:EbM7X4 4:Am7X2 4:D7X2 2:GM7 2:Bb7 2:EbM7 2:F#7 4:BM7X4
+		// 4:Fm7X2 4:Bb7X2 4:EbM7X4 4:Am7X2 4:D7X2 4:GM7X4 4:C#m7X2 4:F#7X2 4:BM7X4
+		// 4:Fm7X2 4:Bb7X2 4:EbM7X4 8:C#m7 4:C#ot 8:C#m7 2:C#ot 2:BM7 2:D7 2:GM7 2:Bb7
+		// 4:EbM7X4 4:Am7X2 4:D7X2 2:GM7 2:Bb7 2:EbM7 2:F#7 4:BM7X4 4:Fm7X2 4:Bb7X2
+		// 4:EbM7X4 4:Am7X2 4:D7X2 4:GM7X4 4:C#m7X2 4:F#7X2 4:BM7X4 4:Fm7X2 4:Bb7X2
+		// 4:EbM7X4 8:C#m7 4:C#ot 8:C#m7 2:C#ot";
 
 //		MyInterface myInterface = (int a, String b) -> String.valueOf(a + Integer.parseInt(b));
 //		prt(myInterface.affiche(2, "7"));
 
-		String[] rep = quest.nextLine().split(" ");
+		String[] rep = ((String[]) quest.nextLine().split(" "));
 
 		for (String elem : rep) {
-			Chord accord = new Chord().parseToChord(elem);
-
+			Chord accord = new Chord();
+			accord = Harmonie.parseToChord(elem);
 			for (int j = 0; j < accord.getMulti(); j++) {
-				Chord receptacle = new Chord().parseToChord(elem);
-				receptacle.setMulti(1);
+				receptacle = Harmonie.parseToChord(elem);
 				grille.addChord(receptacle);
 			}
 		}
@@ -88,21 +120,36 @@ public class Application {
 
 			grille.setTempo(180);
 
-			grille.getContenu().forEach(c -> {
-				if (prt(c.toString()) % 4 == 0) {
-					prtln(" ");
+			grille.getContenu().forEach(acc -> {
+				if (prt(acc.toString()) % 4 == 0) {
+					prtln(LINE);
 				} else {
 					prt("  \t");
 					count--;
 				}
 			});
 
-			grille.getContenu().forEach(g -> prt(g.toString() + " "));
-
 			pl.injectSeq(grille);
 			pl.injectBasse(grille);
 
+			printLigne();
+			prt(" Affiche contenu de la grille ");
+			printLigne();
+			grille.getContenu().forEach(element -> {
+				prtln("Accord :: " + element.toString());
+				for (int h = 1; h < 3; h++) {
+					prt(" transposition(" + h + ") :: " + (element.transpose(h)).toString() + " ");
+					prtln("getSeconde() :: " + element.getSecondInChord().getName() + " getQuinte() :: "
+							+ element.getQuinte().toString()+" "
+							+ "getTierce() :: "+element.getTierce().getName()+" "
+							);
+				}
+				prtln(LINE);
+
+			});
+
 			pl.play();
+
 			prtln("merci au revoir");
 			System.exit(0);
 			break;
