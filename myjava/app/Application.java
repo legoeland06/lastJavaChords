@@ -134,13 +134,12 @@ public class Application {
 			printLigne();
 			grille.getContenu().forEach(element -> {
 				prtln("Accord :: " + element.toString());
-				for (int h = 1; h < 3; h++) {
-					prt(" transposition(" + h + ") :: " + (element.transpose(h)).toString() + " ");
+					prt(" transposition(1) :: " + (element.transpose(1)).toString() + " ");
 					prtln("getSeconde() :: " + element.getSecondInChord().getName() + " getQuinte() :: "
 							+ element.getQuinte().toString()+" "
 							+ "getTierce() :: "+element.getTierce().getName()+" "
 							);
-				}
+				
 				prtln(LINE);
 
 			});
