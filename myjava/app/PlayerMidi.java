@@ -241,19 +241,19 @@ public class PlayerMidi {
 	 */
 	public Integer iA(int compte, Chord c, Chord accPrecedant, Chord accSuivant) {
 
-		Integer alea = (int) Math.random() * (16) + 1;
+		Integer alea = (int) Math.random() * (5) + 1;
 		Integer alea2 = (int) Math.round(Math.random() * 7 + 1);
 		List<Integer> valeur = Harmonie.chordToValues(c);
 		compte = compte % 64;
 		Application.prt(" || compte = " + String.valueOf(compte) + " || ");
 		if (c.getTime() == 4 && !c.isPlayed()) {
-			if ((compte % (alea2)) == 1) {
+			if ((compte % (alea)) == 1) {
 				return this.encadreValeurBasse(Harmonie.noteToVal(c.getSecondInChord()));
 			} else if ((compte % (alea2)) == 2) {
 				return this.encadreValeurBasse(Harmonie.noteToVal(c.getTierce()));
 			} else if (compte % (8 * alea2) == 3) {
 				return this.encadreValeurBasse(Harmonie.noteToVal(c.getSecondInChord()));
-			} else if ((compte % (alea2)) == 4) {
+			} else if ((compte % (alea)) == 4) {
 				return this.encadreValeurBasse(Harmonie.noteToVal(c.getTierce()));
 			}
 			int valGet = compte > alea2 ? (compte - alea2) : (alea2 - compte);
@@ -263,7 +263,7 @@ public class PlayerMidi {
 		Application.prt(
 				Harmonie.noteToVal(Harmonie.chordToComponents(c).get(compte % Harmonie.chordToComponents(c).size())));
 
-		return Harmonie.noteToVal(Harmonie.chordToComponents(c).get(compte % Harmonie.chordToComponents(c).size()));
+		return Harmonie.noteToVal(c.getFondamentale());
 	}
 
 	/**
