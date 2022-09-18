@@ -1,7 +1,6 @@
 package myjava.app;
 
 import java.util.Scanner;
-import java.util.function.Consumer;
 
 /**
  * @author Eric Bruneau
@@ -24,7 +23,7 @@ public class Application {
 	 * aligner un certain nombre d'objets sur une ligne et prévoir un retour à la
 	 * ligne au bout de n fois
 	 * 
-	 * @param string
+	 * @param objectToStringOut
 	 * @return count incremented
 	 */
 	public static Integer prt(Object objectToStringOut) {
@@ -40,9 +39,7 @@ public class Application {
 		prtln(LINE);
 	}
 	/**
-	 * @param stringOut
-	 * @return count but not incremented Affiche une ligne de séparation si "-" est
-	 *         donné en paramètre
+	 * @param objectToStringOut
 	 */
 	public static void prtln(Object objectToStringOut) {
 		if (

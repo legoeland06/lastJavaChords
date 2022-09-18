@@ -1,7 +1,5 @@
 package myjava.app;
 
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author ericbruneau
@@ -37,7 +35,7 @@ public class Note implements Transposable<Note> {
 	}
 
 	/**
-	 * @return
+	 * @return name String of this note
 	 */
 	public String getName() {
 		return name;

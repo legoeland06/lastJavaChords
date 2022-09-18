@@ -1,7 +1,5 @@
 package myjava.app;
 
-import java.util.*;
-
 /**
  * @author ericbruneau
  *

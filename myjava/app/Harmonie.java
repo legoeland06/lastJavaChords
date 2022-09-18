@@ -5,6 +5,11 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * @author Eric Bruneau
+ *
+ * Classe principale de controle
+ */
 public class Harmonie {
 
 	private static char SEPARATE_INT = ':';
@@ -16,9 +21,7 @@ public class Harmonie {
 	private static final String[][] NOTE_VAL_DICT = { { "A", "9" }, { "A#", "10" }, { "Bb", "10" }, { "Cb", "11" },
 			{ "B", "11" }, { "C", "0" }, { "Db", "1" }, { "C#", "1" }, { "D", "2" }, { "D#", "3" }, { "Eb", "3" },
 			{ "E", "4" }, { "F", "5" }, { "Gb", "6" }, { "F#", "6" }, { "G", "7" }, { "G#", "8" }, { "Ab", "8" }, };
-	private static final String[][] NOTE_BEMOL_DIEZE = { { "A#", "10" }, { "Bb", "10" }, { "Cb", "11" }, { "Db", "1" },
-			{ "C#", "1" }, { "D#", "3" }, { "Eb", "3" }, { "Gb", "6" }, { "F#", "6" }, { "G#", "8" }, { "Ab", "8" }, };
-
+	
 	private static final String[][] _qualitiesStrings = { { "ot", ":" }, { "5", "0:7:12:19:" }, { "no5", "0:4:12:16:" },
 			{ "omit5", "0:4:12:16:" }, { "m(no5)", "0:3:12:15:" }, { "m(omit5)", "0:3:12:15:" }, { " ", "0:4:7:12:" },
 			{ "maj", "0:4:7:12:" }, { "m", "0:3:7:12:" }, { "min", "0:3:7:12:" }, { "-", "0:3:7:12:" },
@@ -177,9 +180,17 @@ public class Harmonie {
 		return prevNote;
 	}
 
-	public static List<Note> chordToComponents(Chord c) {
+	/**
+	 * @return List<Note> componentsOfChord
+	 * 
+	 *         methode qui renvoi un Objet List<Note> il transforme un accord vers
+	 *         une liste d'objets Note
+	 *         
+	 * @param chord
+	 */
+	public static List<Note> chordToComponents(Chord chord) {
 
-		List<Integer> values = chordToValues(c);
+		List<Integer> values = chordToValues(chord);
 
 		/*
 		 * Attention : map stream et map index pas sur le 0 tous les deux
@@ -188,8 +199,19 @@ public class Harmonie {
 
 		return componentsOfChord;
 	}
-
-	public static List<Integer> chordToValues(Chord c) {
+	
+	/**
+	 * @return List<Integer> valuesChordIntList
+	 *
+	 *         méthode qui renvoi un Objet List<Integer>
+	 * 
+	 *         Transforme un <b>accord</b> précis (ex Cm7b5/D) en <b>StringListe de
+	 *         ecartNoteInteger</b> sans prendre en compte la basse
+	 * 
+	 * @param chord : de la forme Chord
+	 * 
+	 */
+	public static List<Integer> chordToValues(Chord chord) {
 
 		/*
 		 * valuesChordIntList est la liste qui récupère les int écarts entre les notes
@@ -200,12 +222,12 @@ public class Harmonie {
 
 		List<Integer> valuesChordIntList = new ArrayList<>();
 
-		String qualityName = c.getQuality().getQualityName();
+		String qualityName = chord.getQuality().getQualityName();
 
 		/*
 		 * on récupère la fondamentale de l'accord
 		 */
-		Note rootNote = c.getFondamentale();
+		Note rootNote = chord.getFondamentale();
 
 		/*
 		 * on recupère la valeur de la fondamentale dans rootNoteToVal
@@ -237,10 +259,11 @@ public class Harmonie {
 	}
 
 	/**
-	 * @param chaine
+	 * @param chaine 
+	 * @param chord
 	 * @return String chaine
 	 */
-	public static Chord parseTimerFromString(String chaine,Chord c) {
+	public static Chord parseTimerFromString(String chaine,Chord chord) {
 		/*
 		 * initialisation de la chaineRetour
 		 */
@@ -277,9 +300,10 @@ public class Harmonie {
 
 	/**
 	 * @param chaine
+	 * @param chord
 	 * @return String chaine
 	 */
-	public static Chord parseMultiFromString(String chaine,Chord c) {
+	public static Chord parseMultiFromString(String chaine,Chord chord) {
 		/*
 		 * init de chaineRetour
 		 */
@@ -303,7 +327,7 @@ public class Harmonie {
 			 * renvoi la chaine
 			 */
 			sauveChord.setMulti(1);
-			sauveChord.setTime(c.getTime());
+			sauveChord.setTime(chord.getTime());
 			sauveChord.setChaine(chaine);
 			return sauveChord;
 		}
@@ -312,7 +336,7 @@ public class Harmonie {
 		 * par défaut ou par demande de paramètre dans la chaine
 		 */
 		sauveChord.setChaine(chaineRetour);
-		sauveChord.setTime(c.getTime());
+		sauveChord.setTime(chord.getTime());
 		return sauveChord;
 	}
 

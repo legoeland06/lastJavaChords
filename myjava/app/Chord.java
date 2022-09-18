@@ -1,8 +1,5 @@
 package myjava.app;
 
-import java.util.*;
-import java.util.List;
-
 /**
  * @author EricBruneau
  */
@@ -45,10 +42,16 @@ public final class Chord implements Transposable<Chord> {
 		super();
 	}
 	
+	/**
+	 * @param chaine est la chaine témoin de la construction de l'accord
+	 */
 	public void setChaine(String chaine) {
 		this.chaine=chaine;
 	}
 	
+	/**
+	 * @return chaine est la chaine témoin de la construction de l'accord
+	 */
 	public String getChaine() {
 		return this.chaine;
 	}
@@ -138,26 +141,6 @@ public final class Chord implements Transposable<Chord> {
 	}
 
 	/**
-	 * @return List<Note> componentsOfChord
-	 * 
-	 *         methode qui renvoi un Objet List<Note> il transforme un accord vers
-	 *         une liste d'objets Note
-	 */
-	
-
-	/**
-	 * @return List<Integer> valuesChordIntList
-	 *
-	 *         méthode qui renvoi un Objet List<Integer>
-	 * 
-	 *         Transforme un <b>accord</b> précis (ex Cm7b5/D) en <b>StringListe de
-	 *         ecartNoteInteger</b> sans prendre en compte la basse
-	 * 
-	 * @param this : de la forme Chord
-	 * 
-	 */
-
-	/**
 	 * @return Note revois la quinte de l'accord en traitant la fondamentale et en
 	 *         testant si l'accord (la quinte) est simple, diminuée ou augmentée
 	 */
@@ -206,12 +189,15 @@ public final class Chord implements Transposable<Chord> {
 	}
 	
 	/**
-	 * @return
+	 * @return true if this chord is Major
 	 */
 	public boolean isMajor() {
 		return this.getQuality().getQualityName().contains("M");
 	}
 	
+	/**
+	 * @return true if this chord is 7th
+	 */
 	public boolean isSeptieme() {
 		return this.getQuality().getQualityName().contains("7") && !isMinor();
 	}

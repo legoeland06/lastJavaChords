@@ -5,10 +5,11 @@ package myjava.app;
  * 
  * @author ericbruneau
  *
- * @param <T>
+ * @param <T> t
  */
 public interface Transposable<T> {
 /**
+ * @param t 
  * @param object
  * @return object type T
  */

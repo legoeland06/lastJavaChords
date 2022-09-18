@@ -13,7 +13,13 @@ public class PlayerMidi {
 	private Sequence sequence;
 	private long tempo;
 	private Track track, trackBasse;
+	/**
+	 * 
+	 */
 	public static float newPos = 0;
+	/**
+	 * 
+	 */
 	public static int volumeNote = 100;
 
 	/**
@@ -232,30 +238,6 @@ public class PlayerMidi {
 	 * @param accPrecedant
 	 * @param accSuivant
 	 * @return Integer : la note envoyée est faite après passage par cette méthode
-	 * 
-	 *         <pre>
-	 *         {@code
-		 * Integer alea = (int) Math.random() * (16) + 1;
-		 * Integer alea2 = (int) Math.random() * (4) + 1;
-		 * List<Integer> valeur = c.chordToValues();
-		 * compte %= 16;
-		 * Application.prt(" || compte = " + String.valueOf(compte) + " || ");
-		 * if (c.getTime() == 4 && !c.isPlayed()) {
-		 * 	  if ((compte % (4 * alea)) == 1) {
-		 * 		 return this.encadreValeurBasse(valeur.get(0) + 2);
-	 *         } else if ((compte % (4 * alea)) == 2) {
-	 *         return this.encadreValeurBasse(valeur.get(1));
-	 *         }
-	 *         if (compte % (8 * alea2) == 3) {
-	 *         return this.encadreValeurBasse(Note.noteToVal(c.getFondamentale()) - 1);
-	 *         } else if ((compte % (4 * alea)) == 3) {
-	 *         return this.encadreValeurBasse(valeur.get(2));
-	 *         }
-	 *         int valGet = compte > alea2 ? (compte - alea2) : (alea2 - compte);
-	 *         }
-	 *         return Note.noteToVal(c.getFondamentale());
-	 *         }
-	 *         </pre>
 	 */
 	public Integer iA(int compte, Chord c, Chord accPrecedant, Chord accSuivant) {
 
