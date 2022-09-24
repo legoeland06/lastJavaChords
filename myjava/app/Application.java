@@ -10,8 +10,6 @@ public class Application {
 
 	public static int count = 0;
 	private static char LINE = '-';
-		
-	
 
 	/**
 	 * méthode qui écrit sur la ligne et incrémente un compteur utilité : pouvoir
@@ -28,17 +26,46 @@ public class Application {
 	}
 
 	/**
+	 * @param grille
+	 */
+	public static void printGrille(Grille grille) {
+		if (grille != null)
+			grille.getContenu().forEach(c -> prt(c + " "));
+		else
+			prtln("Pas de grille à afficher");
+	}
+
+	/**
+	 * @param grille
+	 */
+	public static void printGrilleDetaillee(Grille grille) {
+		if (grille != null)
+			grille.getContenu().forEach(element -> {
+				prtln("Accord :: " + element.toString());
+				prt(" transposition(1) :: " + (element.transpose(1)).toString() + " ");
+				prtln("getSeconde() :: " + element.getSecondInChord().getName() + " getQuinte() :: "
+						+ element.getQuinte().toString() + " " + "getTierce() :: " + element.getTierce().getName()
+						+ " ");
+
+				prtln(LINE);
+
+			});
+		else
+			prtln("Pas de grille à afficher");
+	}
+
+	/**
 	 * Affiche une ligne en sortie de console
 	 */
 	public static void printLigne() {
 		prtln(LINE);
 	}
+
 	/**
 	 * @param objectToStringOut
 	 */
 	public static void prtln(Object objectToStringOut) {
-		if (
-				( (String) String.valueOf(objectToStringOut) ).contentEquals(String.valueOf(LINE))) {
+		if (((String) String.valueOf(objectToStringOut)).contentEquals(String.valueOf(LINE))) {
 			System.out.println("\n--------------------------------------------------------");
 			return;
 		}
@@ -50,6 +77,7 @@ public class Application {
 	 */
 	public static void main(String[] args) {
 
+		MyJmenu.main(args);
 		prtln("Entrez un accords ou une suite d'accords...");
 
 		prtln(LINE);
@@ -78,7 +106,7 @@ public class Application {
 
 			PlayerMidi pl = new PlayerMidi();
 
-			grille.setTempo(180);
+			grille.setTempo(210);
 
 			grille.getContenu().forEach(acc -> {
 				if (prt(acc.toString()) % 4 == 0) {
@@ -95,18 +123,9 @@ public class Application {
 			printLigne();
 			prt(" Affiche contenu de la grille ");
 			printLigne();
-			grille.getContenu().forEach(element -> {
-				prtln("Accord :: " + element.toString());
-					prt(" transposition(1) :: " + (element.transpose(1)).toString() + " ");
-					prtln("getSeconde() :: " + element.getSecondInChord().getName() + " getQuinte() :: "
-							+ element.getQuinte().toString()+" "
-							+ "getTierce() :: "+element.getTierce().getName()+" "
-							);
-				
-				prtln(LINE);
+			printGrilleDetaillee(grille);
 
-			});
-
+			printGrille(grille);
 			pl.play();
 
 			prtln("merci au revoir");

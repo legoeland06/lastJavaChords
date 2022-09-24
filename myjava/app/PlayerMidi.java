@@ -225,9 +225,9 @@ public class PlayerMidi {
 	 * @return integer : la valeur de la basse encadrée Integer
 	 */
 	public Integer encadreValeurBasse(Integer v) {
-		if (v < -8)
+		if (v < -5)
 			v += 12;
-		if (v > 16)
+		if (v > 7)
 			v -= 12;
 		return v;
 	}
@@ -246,18 +246,27 @@ public class PlayerMidi {
 		List<Integer> valeur = Harmonie.chordToValues(c);
 		compte = compte % 64;
 		Application.prt(" || compte = " + String.valueOf(compte) + " || ");
-		if (c.getTime() == 4 && !c.isPlayed()) {
-			if ((compte % (alea)) == 1) {
+		if (c.getTime() == 4 && !c.isPlayed() && compte % 4 != 0) {
+			if (compte % 13 == 1) {
 				return this.encadreValeurBasse(Harmonie.noteToVal(c.getSecondInChord()));
 			} else if ((compte % (alea2)) == 2) {
 				return this.encadreValeurBasse(Harmonie.noteToVal(c.getTierce()));
-			} else if (compte % (8 * alea2) == 3) {
+
+			} else if (compte % 13 == 3) {
 				return this.encadreValeurBasse(Harmonie.noteToVal(c.getSecondInChord()));
-			} else if ((compte % (alea)) == 4) {
+			} else if (compte % 13 == 4) {
+				return this.encadreValeurBasse(Harmonie.noteToVal(c.getQuinte()));
+			}
+
+			else if ((compte % (alea)) == 4) {
 				return this.encadreValeurBasse(Harmonie.noteToVal(c.getTierce()));
 			}
 			int valGet = compte > alea2 ? (compte - alea2) : (alea2 - compte);
 			return this.encadreValeurBasse(valeur.get(valGet != 0 ? valGet % valeur.size() : valGet));
+		} else if (c.getTime()==2 && compte%2==0){
+			return this.encadreValeurBasse(Harmonie.noteToVal(c.getFondamentale()));
+		}  else if (c.getTime()==2 && compte%2==1){
+			return this.encadreValeurBasse(Harmonie.noteToVal(c.getQuinte()));
 		}
 		Application.printLigne();
 		Application.prt(
