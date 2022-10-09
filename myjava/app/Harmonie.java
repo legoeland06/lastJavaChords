@@ -1,14 +1,18 @@
 package myjava.app;
 
+import java.nio.file.DirectoryStream.Filter;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 /**
  * @author Eric Bruneau
  *
- * Classe principale de controle
+ *         Classe principale
  */
 public class Harmonie {
 
@@ -21,8 +25,8 @@ public class Harmonie {
 	private static final String[][] NOTE_VAL_DICT = { { "A", "9" }, { "A#", "10" }, { "Bb", "10" }, { "Cb", "11" },
 			{ "B", "11" }, { "C", "0" }, { "Db", "1" }, { "C#", "1" }, { "D", "2" }, { "D#", "3" }, { "Eb", "3" },
 			{ "E", "4" }, { "F", "5" }, { "Gb", "6" }, { "F#", "6" }, { "G", "7" }, { "G#", "8" }, { "Ab", "8" }, };
-	
-	private static final String[][] _qualitiesStrings = { { "ot", ":" }, { "5", "0:7:12:19:" }, { "no5", "0:4:12:16:" },
+
+	private static final String[][] _qualitiesStrings = { { "ot", "0:" }, { "5", "0:7:12:19:" }, { "no5", "0:4:12:16:" },
 			{ "omit5", "0:4:12:16:" }, { "m(no5)", "0:3:12:15:" }, { "m(omit5)", "0:3:12:15:" }, { " ", "0:4:7:12:" },
 			{ "maj", "0:4:7:12:" }, { "m", "0:3:7:12:" }, { "min", "0:3:7:12:" }, { "-", "0:3:7:12:" },
 			{ "dim", "0:3:6:12:" }, { "(b5)", "0:4:6:12:" }, { "aug", "0:4:8:12:" }, { "sus2", "0:2:7:12:" },
@@ -51,30 +55,42 @@ public class Harmonie {
 			{ "M7add13", "0:4:7:9:11:14:" } };
 
 	/**
-	 * @return List<Note>
+	 * @return List<Note> Cette méthode retourne une liste composée des notes de la
+	 *         constante NOTE_VAL_DICT
 	 */
-	public static List<Note> getNoteValDict() {
-		List<Note> receptacle = new ArrayList<>();
-		for (String[] note : NOTE_VAL_DICT) {
-			receptacle.add(stringToNote(note[0]));
-		}
-		return receptacle;
+	public static List<Note> getListeDeNotes() {
+
+		List<Note> listeDeNote = new ArrayList<>();
+		for (String[] a : NOTE_VAL_DICT)
+			listeDeNote.add(stringToNote(a[0]));
+
+		return listeDeNote;
 	}
 
 	/**
-	 * @return List<Note>
+	 * @return HashMap suzy for thz future
+	 */
+	public static Map<Note, Integer> mapNoteInteger() {
+
+		Map<Note, Integer> suzy = new HashMap<>();
+		for (String[] paire : NOTE_VAL_DICT) {
+			suzy.put(stringToNote(paire[0]), Integer.parseInt(paire[1]));
+		}
+		return suzy;
+	}
+
+	/**
+	 * @return List<Note> méthode inutile pour le moment receptacle va devenir une
+	 *         liste de Note en commençant par les bémols et les dièzes et en
+	 *         finissant par les notes simples
 	 */
 	public static List<Note> getNoteValDictByBemolDieze() {
 
 		List<Note> receptacle = new ArrayList<>();
 
-		getNoteValDict().stream().filter(t -> t.getName().length() == 2).forEach(note -> receptacle.add(note));
-		getNoteValDict().stream().filter(t -> t.getName().length() == 1).forEach(note -> receptacle.add(note));
+		getListeDeNotes().stream().filter(t -> t.getName().length() == 2).forEach(note -> receptacle.add(note));
+		getListeDeNotes().stream().filter(t -> t.getName().length() == 1).forEach(note -> receptacle.add(note));
 
-		/*
-		 * receptacle va devenir une liste de Note en commençant par les bémols et les
-		 * dièzes et en finissant par les notes simples
-		 */
 		return receptacle;
 	}
 
@@ -83,13 +99,10 @@ public class Harmonie {
 	 * @return Boolean
 	 */
 	public static Boolean existeOrNo(String note) {
-		boolean existe = false;
-		for (String[] strings : NOTE_VAL_DICT) {
-			if (strings[0].indexOf(note) != -1) {
-				existe = true;
-			}
-		}
-		return existe;
+		if (getListeDeNotes().stream().filter(c -> c.getName() == note).count() > 0)
+			return true;
+
+		return false;
 	}
 
 	/**
@@ -98,14 +111,12 @@ public class Harmonie {
 	 */
 	public static Integer noteToVal(Note n) {
 
-		Integer sortie = 0;
-		for (String[] laval : NOTE_VAL_DICT) {
-			if (laval[0].contentEquals(n.getName())) {
-				sortie = Integer.parseInt(laval[1]);
-				break;
-			}
-		}
-		return sortie;
+		for (String[] laval : NOTE_VAL_DICT)
+			if (laval[0].contentEquals(n.getName()))
+				return Integer.parseInt(laval[1]);
+
+		return null;
+
 	}
 
 	/**
@@ -114,7 +125,7 @@ public class Harmonie {
 	 */
 	public static Note valToNote(int v) {
 		Integer moduloNote = (v) % 12;
-		String victor = "";
+		String victor=null;
 		for (String[] strings : NOTE_VAL_DICT) {
 			if (Integer.parseInt(strings[1]) == moduloNote) {
 				victor = strings[0];
@@ -129,10 +140,6 @@ public class Harmonie {
 	 * @return Note
 	 */
 	public static Note stringToNote(String s) {
-		if (!existeOrNo(s)) {
-			System.out.println("Probleme de notes: " + s);
-			System.exit(0);
-		}
 		return new Note(s);
 	}
 
@@ -185,7 +192,7 @@ public class Harmonie {
 	 * 
 	 *         methode qui renvoi un Objet List<Note> il transforme un accord vers
 	 *         une liste d'objets Note
-	 *         
+	 * 
 	 * @param chord
 	 */
 	public static List<Note> chordToComponents(Chord chord) {
@@ -199,7 +206,7 @@ public class Harmonie {
 
 		return componentsOfChord;
 	}
-	
+
 	/**
 	 * @return List<Integer> valuesChordIntList
 	 *
@@ -259,11 +266,11 @@ public class Harmonie {
 	}
 
 	/**
-	 * @param chaine 
+	 * @param chaine
 	 * @param chord
 	 * @return String chaine
 	 */
-	public static Chord parseTimerFromString(String chaine,Chord chord) {
+	public static Chord parseTimerFromString(String chaine, Chord chord) {
 		/*
 		 * initialisation de la chaineRetour
 		 */
@@ -303,7 +310,7 @@ public class Harmonie {
 	 * @param chord
 	 * @return String chaine
 	 */
-	public static Chord parseMultiFromString(String chaine,Chord chord) {
+	public static Chord parseMultiFromString(String chaine, Chord chord) {
 		/*
 		 * init de chaineRetour
 		 */
@@ -358,7 +365,7 @@ public class Harmonie {
 			parsedChord.setFondamentale(stringToNote(chaine));
 			parsedChord.setTime(4);
 			parsedChord.setMulti(1);
-			parsedChord.setBasse(stringToNote(chaine));
+			parsedChord.setBasse(parsedChord.getFondamentale());
 			parsedChord.setQuality(new Quality(" "));
 			parsedChord.setChaine(parsedChord.toString());
 			return parsedChord;
@@ -377,7 +384,7 @@ public class Harmonie {
 				 * fixe la qualité et on retourne le l'accord formaté
 				 */
 				parsedChord.setFondamentale(stringToNote(chaine));
-				parsedChord.setBasse(stringToNote(chaine));
+				parsedChord.setBasse(parsedChord.getFondamentale());
 				parsedChord.setQuality(new Quality(" "));
 				parsedChord.setChaine(parsedChord.toString());
 				return parsedChord;
@@ -392,7 +399,7 @@ public class Harmonie {
 
 				parsedChord.setFondamentale(stringToNote(String.valueOf(chaine.charAt(0))));
 				parsedChord.setQuality(new Quality(String.valueOf(chaine.charAt(1))));
-				parsedChord.setBasse(stringToNote(String.valueOf(chaine.charAt(0))));
+				parsedChord.setBasse(parsedChord.getFondamentale());
 				chaine = String.valueOf(chaine.charAt(0));
 				parsedChord.setChaine(parsedChord.toString());
 				return parsedChord;
@@ -406,13 +413,13 @@ public class Harmonie {
 		/*
 		 * parsing du paramètre timer
 		 */
-		parsedChord = parseTimerFromString(chaine,parsedChord);
+		parsedChord = parseTimerFromString(chaine, parsedChord);
 		chaine = parsedChord.getChaine();
 
 		/*
 		 * parsing du paramètre multi
 		 */
-		parsedChord = parseMultiFromString(chaine,parsedChord);
+		parsedChord = parseMultiFromString(chaine, parsedChord);
 		chaine = parsedChord.getChaine();
 
 		/*

@@ -1,15 +1,21 @@
 package myjava.app;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
+import javax.swing.BorderFactory;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.border.Border;
 
 /**
  * @author ericbruneau
@@ -36,7 +42,7 @@ public class MyJmenu {
 	public static void main(String[] args) {
 
 		// tout remettre dans le main
-		JFrame fen = new JFrame("zChords - Description des accords");
+		JFrame fen = new JFrame(args.toString());
 		JPanel panel = new JPanel();
 		JMenuBar myMenuBar = new JMenuBar();
 
@@ -44,11 +50,21 @@ public class MyJmenu {
 		fen.setSize(500, 400);
 		fen.setContentPane(panel);
 		panel.addInputMethodListener(null);
-
+		
 		// création de la barre des menus
 
 		// Ajout de la barre de menus au JPanel
 		panel.add(myMenuBar);
+		//Create a panel and add components to it.
+		JPanel contentPane = new JPanel(new BorderLayout());
+		
+//		contentPane.setBorder(BorderFactory.createLineBorder(Color.black));
+//		contentPane.add(Comp, BorderLayout.CENTER);
+//		contentPane.add(anotherComponent, BorderLayout.PAGE_END);
+
+
+		//topLevelContainer.setContentPane(contentPane);
+
 		myMenuBar.setBounds(0, 0, 500, 30);
 
 		// Automatisation de la création du menu
@@ -126,31 +142,6 @@ public class MyJmenu {
 
 		}
 		fen.setVisible(true);
-
-//		JMenu fileMenu = new JMenu("Fichier");
-//		JMenuItem saveMenu = new JMenuItem("Sauver");
-//		JMenuItem loadMenu = new JMenuItem("Charger");
-//
-//		JMenu menuAccord = new JMenu("Accord");
-//		JMenuItem item1 = new JMenuItem("Nouveau");
-//
-//		JMenu menuGrille = new JMenu("Grille");
-//		JMenuItem item2 = new JMenuItem("Nouvelle");
-//
-//		JMenu menuFichier = new JMenu("Aide");
-//
-//		fileMenu.add(saveMenu);
-//		fileMenu.add(loadMenu);
-//
-//		menuAccord.add(item1);
-//
-//		menuGrille.add(item2);
-//
-//		// Ajout du menu à la barre des menus
-//		myMenuBar.add(fileMenu);
-//		myMenuBar.add(menuAccord);
-//		myMenuBar.add(menuGrille);
-//		myMenuBar.add(menuFichier);
 
 	}
 }
