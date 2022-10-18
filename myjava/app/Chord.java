@@ -1,5 +1,7 @@
 package myjava.app;
 
+import java.util.List;
+
 /**
  * @author EricBruneau
  */
@@ -11,8 +13,11 @@ public final class Chord implements Transposable<Chord> {
 	private Note basse;
 	private int multi;
 	private boolean played = true;
+	private int indexInGrille;
 
-	private String chaine="";
+	private String chaine = "";
+	private List<Note> notes;
+
 	/**
 	 * @param time
 	 * @param fondamentale
@@ -41,14 +46,14 @@ public final class Chord implements Transposable<Chord> {
 	public Chord() {
 		super();
 	}
-	
+
 	/**
 	 * @param chaine est la chaine témoin de la construction de l'accord
 	 */
 	public void setChaine(String chaine) {
-		this.chaine=chaine;
+		this.chaine = chaine;
 	}
-	
+
 	/**
 	 * @return chaine est la chaine témoin de la construction de l'accord
 	 */
@@ -153,30 +158,36 @@ public final class Chord implements Transposable<Chord> {
 		return this.getFondamentale().transpose(7);
 
 	}
-	
+
 	/**
-	 * @return Note la tierce mineure ou majeure de l'accord 
+	 * @return Note la tierce mineure ou majeure de l'accord
 	 */
 	public Note getTierce() {
-		if (this.isMinor()) 
+		if (this.isMinor())
 			return this.getFondamentale().transpose(3);
-		else return this.getFondamentale().transpose(4);
+		else
+			return this.getFondamentale().transpose(4);
 	}
-	
+
+	/**
+	 * @return
+	 */
 	public Note getSeptieme() {
-		if (this.isMinor()) 
+		if (this.isMinor())
 			return this.getFondamentale().transpose(10);
 		else if (this.isSeptieme())
 			return this.getFondamentale().transpose(10);
-		else if (this.isMajor()) 
+		else if (this.isMajor())
 			return this.getFondamentale().transpose(11);
-		else return this.getFondamentale().transpose(10); 
+		else
+			return this.getFondamentale().transpose(10);
 	}
 
 	/**
 	 * @return Note seconde of Chord
 	 */
-	public Note getSecondInChord() {
+	public Note getSecondFromFondamental() {
+		
 		return (this.getFondamentale()).transpose(2);
 	}
 
@@ -187,14 +198,14 @@ public final class Chord implements Transposable<Chord> {
 
 		return this.getQuality().getQualityName().contains("m");
 	}
-	
+
 	/**
 	 * @return true if this chord is Major
 	 */
 	public boolean isMajor() {
 		return this.getQuality().getQualityName().contains("M");
 	}
-	
+
 	/**
 	 * @return true if this chord is 7th
 	 */
@@ -220,6 +231,55 @@ public final class Chord implements Transposable<Chord> {
 				|| this.getQuality().getQualityName().contains("b5");
 	}
 
+	/**
+	 * @return
+	 */
+	public int getIndexInGrille() {
+		return this.indexInGrille;
+	}
+
+	/**
+	 * @param indexInGrille
+	 */
+	public void setIndexInGrille(int indexInGrille) {
+		this.indexInGrille = indexInGrille;
+	}
+
+	/**
+	 * @return
+	 */
+	public List<Note> getNotes() {
+		return this.notes;
+	}
+
+	/**
+	 * @return
+	 */
+	public int getIndex() {
+		return this.indexInGrille;
+	}
+
+	/**
+	 * @param index
+	 */
+	public void setIndex(int index) {
+		this.indexInGrille = index;
+	}
+
+	/**
+	 * @param grille
+	 */
+	public void addToGrille(Grille grille) {
+		grille.addChord(this);
+	}
+
+	/**
+	 * @param grille
+	 */
+	public void removeFromGrille(Grille grille) {
+		grille.removeChord(this);
+	}
+
 	@Override
 	public Chord clone() {
 		return new Chord();
@@ -227,7 +287,7 @@ public final class Chord implements Transposable<Chord> {
 
 	@Override
 	public String toString() {
-		return getTime() + ":" + getFondamentale().getName() + getQuality().getQualityName() + "/" + getBasse();
+		return this.time + ":" + this.fondamentale.getName() + this.quality.getQualityName() + "/" + this.basse.getName();
 	}
 
 	@Override
@@ -239,6 +299,15 @@ public final class Chord implements Transposable<Chord> {
 		newChord.setBasse(this.getBasse().transpose(t));
 		newChord.setFondamentale(this.getFondamentale().transpose(t));
 		return newChord;
+	}
+
+	/**
+	 * @param notes
+	 */
+	public void setNotes(List<Note> notes) {
+		this.notes=notes;
+		
+		
 	}
 
 }

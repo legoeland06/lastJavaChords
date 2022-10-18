@@ -1,58 +1,59 @@
 package myjava.app;
 
-import java.nio.file.DirectoryStream.Filter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 /**
  * @author Eric Bruneau
  *
  *         Classe principale
  */
-public class Harmonie {
+public enum Harmonie {
+	INSTANCE;
 
-	private static char SEPARATE_INT = ':';
-	private static char SEPARATE_BASSE = '/';
-	private static char SEPARATE_MULTI = 'X';
-	private static char DIEZE = '#';
-	private static char BEMOL = 'b';
+	private static ChordFactory chordFactory = ChordFactory.INSTANCE;
+
+	private static final char SEPARATE_INT = ':';
+	private static final char SEPARATE_BASSE = '/';
+	private static final char SEPARATE_MULTI = 'X';
+	private static final char DIEZE = '#';
+	private static final char BEMOL = 'b';
 
 	private static final String[][] NOTE_VAL_DICT = { { "A", "9" }, { "A#", "10" }, { "Bb", "10" }, { "Cb", "11" },
 			{ "B", "11" }, { "C", "0" }, { "Db", "1" }, { "C#", "1" }, { "D", "2" }, { "D#", "3" }, { "Eb", "3" },
 			{ "E", "4" }, { "F", "5" }, { "Gb", "6" }, { "F#", "6" }, { "G", "7" }, { "G#", "8" }, { "Ab", "8" }, };
 
-	private static final String[][] _qualitiesStrings = { { "ot", "0:" }, { "5", "0:7:12:19:" }, { "no5", "0:4:12:16:" },
-			{ "omit5", "0:4:12:16:" }, { "m(no5)", "0:3:12:15:" }, { "m(omit5)", "0:3:12:15:" }, { " ", "0:4:7:12:" },
-			{ "maj", "0:4:7:12:" }, { "m", "0:3:7:12:" }, { "min", "0:3:7:12:" }, { "-", "0:3:7:12:" },
-			{ "dim", "0:3:6:12:" }, { "(b5)", "0:4:6:12:" }, { "aug", "0:4:8:12:" }, { "sus2", "0:2:7:12:" },
-			{ "sus4", "0:5:7:12:" }, { "sus", "0:5:7:12:" }, { "6", "0:4:7:9:" }, { "7", "0:4:7:10:" },
-			{ "7-5", "0:4:6:10:" }, { "7b5", "0:4:6:10:" }, { "7+5", "0:4:8:10:" }, { "7#5", "0:4:8:10:" },
-			{ "7sus4", "0:5:7:10:" }, { "m6", "0:3:7:9:" }, { "m7", "0:3:7:10:" }, { "m7-5", "0:3:6:10:" },
-			{ "m7b5", "0:3:6:10:" }, { "m7+5", "0:3:8:10:" }, { "m7#5", "0:3:8:10:" }, { "dim6", "0:3:6:8:" },
-			{ "dim7", "0:3:6:9:" }, { "7alt", "0:3:6:9:" }, { "M7", "0:4:7:11:" }, { "maj7", "0:4:7:11:" },
-			{ "M7+5", "0:4:8:11:" }, { "mM7", "0:3:7:11:" }, { "add4", "0:4:5:7:" }, { "Madd4", "0:4:5:7:" },
-			{ "madd4", "0:3:5:7:" }, { "add9", "0:4:7:14:" }, { "Madd9", "0:4:7:14:" }, { "madd9", "0:3:7:14:" },
-			{ "sus4add9", "0:5:7:14:" }, { "sus4add2", "0:2:5:7:" }, { "2", "0:4:7:14:" }, { "add11", "0:4:7:17:" },
-			{ "m11", "0:3:7:17:" }, { "4", "0:4:7:17:" }, { "m69", "0:3:7:9:14:" }, { "69", "0:4:7:9:14:" },
-			{ "9", "0:4:7:10:14:" }, { "m9", "0:3:7:10:14:" }, { "M9", "0:4:7:11:14:" }, { "maj9", "0:4:7:11:14:" },
-			{ "9sus4", "0:5:7:10:14:" }, { "7-9", "0:4:7:10:13:" }, { "7b9", "0:4:7:10:13:" },
-			{ "7+9", "0:4:7:10:15:" }, { "7#9", "0:4:7:10:15:" }, { "9-5", "0:4:6:10:14:" }, { "9b5", "0:4:6:10:14:" },
-			{ "9+5", "0:4:8:10:14:" }, { "9#5", "0:4:8:10:14:" }, { "7#9b5", "0:4:6:10:15:" },
-			{ "7#9#5", "0:4:8:10:15:" }, { "m7b9b5", "0:3:6:10:13:" }, { "7b9b5", "0:4:6:10:13:" },
-			{ "7b9#5", "0:4:8:10:13:" }, { "11", "0:7:10:14:17:" }, { "7+11", "0:4:7:10:18:" },
-			{ "7#11", "0:4:7:10:18:" }, { "M7+11", "0:4:7:11:18:" }, { "M7#11", "0:4:7:11:18:" },
-			{ "7b9#9", "0:4:7:10:13:15:" }, { "7b9#11", "0:4:7:10:13:18:" }, { "7#9#11", "0:4:7:10:15:18:" },
-			{ "7-13", "0:4:7:10:20:" }, { "7b13", "0:4:7:10:20:" }, { "m7add11", "0:3:7:10:17:" },
-			{ "M7add11", "0:4:7:11:17:" }, { "mM7add11", "0:3:7:11:17:" }, { "7b9b13", "0:4:7:10:13:17:20" },
-			{ "9+11", "0:4:7:10:14:18:" }, { "9#11", "0:4:7:10:14:18:" }, { "13", "0:4:7:10:14:21:" },
-			{ "13-9", "0:4:7:10:13:21:" }, { "13b9", "0:4:7:10:13:21:" }, { "13+9", "0:4:7:10:15:21:" },
-			{ "13#9", "0:4:7:10:15:21:" }, { "13+11", "0:4:7:10:18:21:" }, { "13#11", "0:4:7:10:18:21:" },
-			{ "M7add13", "0:4:7:9:11:14:" } };
+	private static final String[][] _qualitiesStrings = { { "ot", "0:" }, { "5", "0:7:12:19:" },
+			{ "no5", "0:4:12:16:" }, { "omit5", "0:4:12:16:" }, { "m(no5)", "0:3:12:15:" },
+			{ "m(omit5)", "0:3:12:15:" }, { " ", "0:4:7:12:" }, { "maj", "0:4:7:12:" }, { "m", "0:3:7:12:" },
+			{ "min", "0:3:7:12:" }, { "-", "0:3:7:12:" }, { "dim", "0:3:6:12:" }, { "(b5)", "0:4:6:12:" },
+			{ "aug", "0:4:8:12:" }, { "sus2", "0:2:7:12:" }, { "sus4", "0:5:7:12:" }, { "sus", "0:5:7:12:" },
+			{ "6", "0:4:7:9:" }, { "7", "0:4:7:10:" }, { "7-5", "0:4:6:10:" }, { "7b5", "0:4:6:10:" },
+			{ "7+5", "0:4:8:10:" }, { "7#5", "0:4:8:10:" }, { "7sus4", "0:5:7:10:" }, { "m6", "0:3:7:9:" },
+			{ "m7", "0:3:7:10:" }, { "m7-5", "0:3:6:10:" }, { "m7b5", "0:3:6:10:" }, { "m7+5", "0:3:8:10:" },
+			{ "m7#5", "0:3:8:10:" }, { "dim6", "0:3:6:8:" }, { "dim7", "0:3:6:9:" }, { "7alt", "0:3:6:9:" },
+			{ "M7", "0:4:7:11:" }, { "maj7", "0:4:7:11:" }, { "M7+5", "0:4:8:11:" }, { "mM7", "0:3:7:11:" },
+			{ "add4", "0:4:5:7:" }, { "Madd4", "0:4:5:7:" }, { "madd4", "0:3:5:7:" }, { "add9", "0:4:7:14:" },
+			{ "Madd9", "0:4:7:14:" }, { "madd9", "0:3:7:14:" }, { "sus4add9", "0:5:7:14:" }, { "sus4add2", "0:2:5:7:" },
+			{ "2", "0:4:7:14:" }, { "add11", "0:4:7:17:" }, { "m11", "0:3:7:17:" }, { "4", "0:4:7:17:" },
+			{ "m69", "0:3:7:9:14:" }, { "69", "0:4:7:9:14:" }, { "9", "0:4:7:10:14:" }, { "m9", "0:3:7:10:14:" },
+			{ "M9", "0:4:7:11:14:" }, { "maj9", "0:4:7:11:14:" }, { "9sus4", "0:5:7:10:14:" },
+			{ "7-9", "0:4:7:10:13:" }, { "7b9", "0:4:7:10:13:" }, { "7+9", "0:4:7:10:15:" }, { "7#9", "0:4:7:10:15:" },
+			{ "9-5", "0:4:6:10:14:" }, { "9b5", "0:4:6:10:14:" }, { "9+5", "0:4:8:10:14:" }, { "9#5", "0:4:8:10:14:" },
+			{ "7#9b5", "0:4:6:10:15:" }, { "7#9#5", "0:4:8:10:15:" }, { "m7b9b5", "0:3:6:10:13:" },
+			{ "7b9b5", "0:4:6:10:13:" }, { "7b9#5", "0:4:8:10:13:" }, { "11", "0:7:10:14:17:" },
+			{ "7+11", "0:4:7:10:18:" }, { "7#11", "0:4:7:10:18:" }, { "M7+11", "0:4:7:11:18:" },
+			{ "M7#11", "0:4:7:11:18:" }, { "7b9#9", "0:4:7:10:13:15:" }, { "7b9#11", "0:4:7:10:13:18:" },
+			{ "7#9#11", "0:4:7:10:15:18:" }, { "7-13", "0:4:7:10:20:" }, { "7b13", "0:4:7:10:20:" },
+			{ "m7add11", "0:3:7:10:17:" }, { "M7add11", "0:4:7:11:17:" }, { "mM7add11", "0:3:7:11:17:" },
+			{ "7b9b13", "0:4:7:10:13:17:20" }, { "9+11", "0:4:7:10:14:18:" }, { "9#11", "0:4:7:10:14:18:" },
+			{ "13", "0:4:7:10:14:21:" }, { "13-9", "0:4:7:10:13:21:" }, { "13b9", "0:4:7:10:13:21:" },
+			{ "13+9", "0:4:7:10:15:21:" }, { "13#9", "0:4:7:10:15:21:" }, { "13+11", "0:4:7:10:18:21:" },
+			{ "13#11", "0:4:7:10:18:21:" }, { "M7add13", "0:4:7:9:11:14:" } };
 
 	/**
 	 * @return List<Note> Cette méthode retourne une liste composée des notes de la
@@ -98,8 +99,9 @@ public class Harmonie {
 	 * @param note
 	 * @return Boolean
 	 */
-	public static Boolean existeOrNo(String note) {
-		if (getListeDeNotes().stream().filter(c -> c.getName() == note).count() > 0)
+	public static boolean existeOrNo(String note) {
+
+		if ((getListeDeNotes().stream().filter(c -> c.getName().contentEquals(note))).count() > 0)
 			return true;
 
 		return false;
@@ -125,7 +127,7 @@ public class Harmonie {
 	 */
 	public static Note valToNote(int v) {
 		Integer moduloNote = (v) % 12;
-		String victor=null;
+		String victor = null;
 		for (String[] strings : NOTE_VAL_DICT) {
 			if (Integer.parseInt(strings[1]) == moduloNote) {
 				victor = strings[0];
@@ -140,6 +142,7 @@ public class Harmonie {
 	 * @return Note
 	 */
 	public static Note stringToNote(String s) {
+
 		return new Note(s);
 	}
 
@@ -164,11 +167,14 @@ public class Harmonie {
 	}
 
 	/**
+	 * @return Note : renvoi la note suivante à <note> dans l'arpège correspondant à
+	 *         l'accord <c>
+	 * 
 	 * @param c
 	 * @param note
 	 * @return Note
 	 */
-	public static Note getNextNoteInChord(Chord c, Note note) {
+	public static Note getNextNoteInArpege(Chord c, Note note) {
 		List<Note> noteList = chordToComponents(c);
 		int noteIndexInList = noteList.indexOf(note);
 		Note prevNote = noteList.get(noteList.size() % (noteIndexInList + 1));
@@ -176,11 +182,14 @@ public class Harmonie {
 	}
 
 	/**
+	 * @return Note : renvoi la note précédente à <note> dans l'arpège correspondant
+	 *         à l'accord <c>
+	 * 
 	 * @param c
 	 * @param note
 	 * @return Note
 	 */
-	public static Note getPrevNoteInChord(Chord c, Note note) {
+	public static Note getPrevNoteInArpege(Chord c, Note note) {
 		List<Note> noteList = chordToComponents(c);
 		int noteIndexInList = noteList.indexOf(note);
 		Note prevNote = noteList.get(noteList.size() % (noteIndexInList - 1));
@@ -227,50 +236,56 @@ public class Harmonie {
 		 * _qualitiesStrings
 		 */
 
-		List<Integer> valuesChordIntList = new ArrayList<>();
+		if (chord.getQuality() != null) {
+			List<Integer> valuesChordIntList = new ArrayList<>();
+			String qualityName = chord.getQuality().getQualityName();
 
-		String qualityName = chord.getQuality().getQualityName();
+			/*
+			 * on récupère la fondamentale de l'accord
+			 */
+			Note rootNote = chord.getFondamentale();
 
-		/*
-		 * on récupère la fondamentale de l'accord
-		 */
-		Note rootNote = chord.getFondamentale();
+			/*
+			 * on recupère la valeur de la fondamentale dans rootNoteToVal
+			 */
+			Integer rootNoteToVal = noteToVal(rootNote);
 
-		/*
-		 * on recupère la valeur de la fondamentale dans rootNoteToVal
-		 */
-		Integer rootNoteToVal = noteToVal(rootNote);
+			/*
+			 * on recupère l'index (qualityNameIndex) de la quality de l'accord s'il existe,
+			 * sinon qualityNameIndex=0
+			 */
+			Integer qualityNameIndex = listeQualitiesName().contains(qualityName)
+					? listeQualitiesName().indexOf(qualityName)
+					: 6;
 
-		/*
-		 * on recupère l'index (qualityNameIndex) de la quality de l'accord s'il existe,
-		 * sinon qualityNameIndex=0
-		 */
-		Integer qualityNameIndex = listeQualitiesName().contains(qualityName)
-				? listeQualitiesName().indexOf(qualityName)
-				: 6;
+			/*
+			 * on en déduit la qualityEcartsString qui en résulte dans le tableaux de
+			 * correspondances le tableau listeQualitiesEcart.
+			 */
+			String qualityEcartsString = listeQualitiesEcart().get(qualityNameIndex);
 
-		/*
-		 * on en déduit la qualityEcartsString qui en résulte dans le tableaux de
-		 * correspondances le tableau listeQualitiesEcart.
-		 */
-		String qualityEcartsString = listeQualitiesEcart().get(qualityNameIndex);
+			/*
+			 * on lit dans le tableau des ecarts
+			 */
+			for (String ecartNotes : (String[]) qualityEcartsString.split(":")) {
+				valuesChordIntList.add(Integer.parseInt(ecartNotes) + rootNoteToVal);
+			}
+			return valuesChordIntList;
 
-		/*
-		 * on lit dans le tableau des ecarts
-		 */
-		for (String ecartNotes : (String[]) qualityEcartsString.split(":")) {
-			valuesChordIntList.add(Integer.parseInt(ecartNotes) + rootNoteToVal);
+		} else {
+			return chord.getNotes().stream().map(c -> noteToVal(c)).toList();
+
 		}
 
-		return valuesChordIntList;
 	}
 
 	/**
 	 * @param chaine
 	 * @param chord
 	 * @return String chaine
+	 * @throws NullPointerException
 	 */
-	public static Chord parseTimerFromString(String chaine, Chord chord) {
+	public static Chord parseTimerFromString(String chaine, Chord chord) throws NullPointerException {
 		/*
 		 * initialisation de la chaineRetour
 		 */
@@ -309,8 +324,9 @@ public class Harmonie {
 	 * @param chaine
 	 * @param chord
 	 * @return String chaine
+	 * @throws NullPointerException
 	 */
-	public static Chord parseMultiFromString(String chaine, Chord chord) {
+	public static Chord parseMultiFromString(String chaine, Chord chord) throws NullPointerException {
 		/*
 		 * init de chaineRetour
 		 */
@@ -348,6 +364,16 @@ public class Harmonie {
 	}
 
 	/**
+	 * @param notes
+	 * @return
+	 */
+	public Chord createChordFromNotes(List<Note> notes) {
+		Chord myChord = new Chord();
+		myChord.setNotes(notes);
+		return myChord;
+	}
+
+	/**
 	 * @param chaine
 	 * @return Chord
 	 * 
@@ -365,9 +391,11 @@ public class Harmonie {
 			parsedChord.setFondamentale(stringToNote(chaine));
 			parsedChord.setTime(4);
 			parsedChord.setMulti(1);
+
 			parsedChord.setBasse(parsedChord.getFondamentale());
 			parsedChord.setQuality(new Quality(" "));
 			parsedChord.setChaine(parsedChord.toString());
+			parsedChord.setNotes(chordToComponents(parsedChord));
 			return parsedChord;
 		} else if (chaine.length() == 2) {
 			/*
@@ -387,6 +415,7 @@ public class Harmonie {
 				parsedChord.setBasse(parsedChord.getFondamentale());
 				parsedChord.setQuality(new Quality(" "));
 				parsedChord.setChaine(parsedChord.toString());
+				parsedChord.setNotes(chordToComponents(parsedChord));
 				return parsedChord;
 			} else {
 
@@ -402,6 +431,7 @@ public class Harmonie {
 				parsedChord.setBasse(parsedChord.getFondamentale());
 				chaine = String.valueOf(chaine.charAt(0));
 				parsedChord.setChaine(parsedChord.toString());
+				parsedChord.setNotes(chordToComponents(parsedChord));
 				return parsedChord;
 			}
 		}
@@ -471,6 +501,7 @@ public class Harmonie {
 			parsedChord.setQuality(new Quality(" "));
 
 		parsedChord.setChaine(parsedChord.toString() + parsedChord.getMulti());
+		parsedChord.setNotes(chordToComponents(parsedChord));
 		return parsedChord;
 	}
 

@@ -7,12 +7,15 @@ import java.util.*;
  * @author Eric Bruneau
  *
  */
-public class PlayerMidi {
+public enum PlayerMidi {
 
+	INSTANCE;
+	
 	private static Sequencer sequencer;
 	private Sequence sequence;
 	private long tempo;
 	private Track track, trackBasse;
+	private Grille grille;
 	/**
 	 * 
 	 */
@@ -22,6 +25,24 @@ public class PlayerMidi {
 	 */
 	public static int volumeNote = 100;
 
+	/**
+	 * @param grille
+	 * @param tempo
+	 */
+	public void init(Grille grille, int tempo) {
+		grille.setTempo(tempo);
+		this.setGrille(grille);
+		injectSeq();
+		injectBasse();
+	}
+
+	
+	
+	private PlayerMidi() {
+		
+	}
+	
+	
 	/**
 	 * @return seuencer
 	 */
@@ -93,19 +114,49 @@ public class PlayerMidi {
 	}
 
 	/**
-	 * 
+	 * @return Grille grille
 	 */
-	public PlayerMidi() {
-		super();
+	public Grille getGrille() {
+		return this.grille;
 	}
 
 	/**
-	 * @param leTempo
+	 * @param grille
 	 */
-	public PlayerMidi(long leTempo) {
-		super();
-		this.tempo = leTempo;
+	public void setGrille(Grille grille) {
+		this.grille = grille;
 	}
+
+	/**
+	 * @return
+	 */
+	public static float getNewPos() {
+		return newPos;
+	}
+
+	/**
+	 * @param newPos
+	 */
+	public static void setNewPos(float newPos) {
+		PlayerMidi.newPos = newPos;
+	}
+
+	/**
+	 * @return integer volumeNote
+	 */
+	public static int getVolumeNote() {
+		return volumeNote;
+	}
+
+	/**
+	 * @param volumeNote
+	 */
+	public static void setVolumeNote(int volumeNote) {
+		PlayerMidi.volumeNote = volumeNote;
+	}
+
+
+	
 
 	/**
 	 * @param track
@@ -116,8 +167,9 @@ public class PlayerMidi {
 	 * @param _time
 	 * @param newPos
 	 * @param timming
-	 * @see #injectBasse(Grille)
-	 * @see #injectSeq(Grille)
+	 * 
+	 * @see #injectBasse()
+	 * @see #injectSeq()
 	 */
 	public void putANote(Track track, int channel, int veloce, boolean played, int valeurNote, Long _time, float newPos,
 			Integer timming) {
@@ -125,9 +177,9 @@ public class PlayerMidi {
 		try {
 
 			MidiEvent msgOn = this.makeEvent(144, channel, valeurNote + 36, velocite,
-					Math.round(newPos * (3200 / tempo)));
+					Math.round(newPos * (3200 / this.tempo)));
 			MidiEvent msgOff = this.makeEvent(128, channel, valeurNote + 36, velocite,
-					Math.round((newPos + 8 / timming) * (3200 / tempo)));
+					Math.round((newPos + 8 / timming) * (3200 / this.tempo)));
 			track.add(msgOn);
 			track.add(msgOff);
 
@@ -145,15 +197,15 @@ public class PlayerMidi {
 	}
 
 	/**
-	 * @param grilleAccord Injecteur de sequence piano accord
+	 * 
 	 */
-	public void injectSeq(Grille grilleAccord) {
+	public void injectSeq() {
 
 		try {
 			sequencer = MidiSystem.getSequencer();
 			sequencer.open();
 			this.sequence = new Sequence(Sequence.SMPTE_24, 4);
-			this.tempo = grilleAccord.getTempo();
+			this.tempo = getGrille().getTempo();
 			newPos = 0l;
 			volumeNote = 100;
 
@@ -164,17 +216,28 @@ public class PlayerMidi {
 
 			sequencer.setTempoInBPM(this.tempo);
 			// Long deplacementCurseur = 0f;
-			List<Chord> maListe = grilleAccord.getContenu();
+
+			/*
+			 * ICI on récupère le contenu de la grille
+			 */
+			List<Chord> maListe = getGrille().getContenu();
+
 			for (int f = 0; f < maListe.size(); f++) {
 				Chord accEnCours = maListe.get(f);
 				// Chord accSuivant = f == maListe.size() - 1 ? maListe.get(0) : maListe.get(f +
 				// 1);
-				Chord accPrecedent = f > 0 ? maListe.get(f - 1) : maListe.get(maListe.size() - 1);
-				Boolean commeLePrecedent = (accEnCours.getFondamentale().getName()
-						+ accEnCours.getQuality().getQualityName() + accEnCours.getBasse().getName())
-						.contentEquals(accPrecedent.getFondamentale().getName()
-								+ accPrecedent.getQuality().getQualityName() + accPrecedent.getBasse().getName());
-				accEnCours.setPlayed((!commeLePrecedent) || f % Math.round(Math.random() * 21 + 1) == 0);
+				if (f > 0) {
+					Chord accPrecedent = f > 0 ? maListe.get(f - 1) : maListe.get(maListe.size() - 1);
+					Boolean commeLePrecedent = (accEnCours.getFondamentale().getName()
+							+ accEnCours.getQuality().getQualityName() + accEnCours.getBasse().getName())
+							.contentEquals(accPrecedent.getFondamentale().getName()
+									+ accPrecedent.getQuality().getQualityName() + accPrecedent.getBasse().getName());
+					accEnCours.setPlayed((!commeLePrecedent) || f % Math.round(Math.random() * 21 + 1) == 0);
+
+				} else {
+					accEnCours.setPlayed(true);
+
+				}
 				if (accEnCours.isPlayed()) {
 
 					List<Integer> valNoteToPlay = Harmonie.explodeChord(Harmonie.chordToValues(accEnCours));
@@ -209,7 +272,8 @@ public class PlayerMidi {
 	}
 
 	/**
-	 * calcul de plusieurs modulos
+	 * calcul de plusieurs modulos fonction de test qui ne rentre pas dans le code
+	 * principal
 	 */
 	public static void moduloNombre() {
 		String sortie = "";
@@ -233,11 +297,53 @@ public class PlayerMidi {
 	}
 
 	/**
+	 * @param chord
+	 * @return int howLong
+	 */
+	public float howLongIsThisChord(Chord chord) {
+		
+		/*
+		 * initialisation de howlong à la valeur du timer du premier accord
+		 * la valeur est l'inverse du timer multiplié par 4
+		 * exemple : timer 4 => 1, timer 1 => 4, et timer 2 => 2
+		 * 
+		 * howlong est incrémenté à chaque fois que la racine de 
+		 * l'accord du type rootChord : String < FondamentaleQuality/Basse > suivant est le même.
+		 */
+		float howLong = chord.getTime() != 0 ? 4 / chord.getTime() : 0;
+		Chord nextChord = getNextChord(chord);
+		String chordRoot = chord.getFondamentale().getName() + chord.getQuality().getQualityName() + "/"
+				+ chord.getBasse().getName();
+		String nextChordRoot = nextChord.getFondamentale().getName() + nextChord.getQuality().getQualityName() + "/"
+				+ nextChord.getBasse().getName();
+		while (chordRoot.contentEquals(nextChordRoot)) {
+			howLong += nextChord.getTime() != 0 ? 4 / nextChord.getTime() : 0;
+		}
+		return howLong;
+	}
+
+	/**
+	 * @param Chord c
+	 * @return the next chord in the grid
+	 */
+	public Chord getNextChord(Chord c) {
+		return this.getGrille().getContenuMap().get(c.getIndex() + 1);
+	}
+
+	/**
+	 * @param Chord c
+	 * @return the prev chrod in the grid
+	 */
+	public Chord getPrevChord(Chord c) {
+		return this.getGrille().getContenuMap().get(c.getIndex() - 1);
+	}
+
+	/**
 	 * @param compte
 	 * @param c
 	 * @param accPrecedant
 	 * @param accSuivant
-	 * @return Integer : la note envoyée est faite après passage par cette méthode
+	 * @return
 	 */
 	public Integer iA(int compte, Chord c, Chord accPrecedant, Chord accSuivant) {
 
@@ -248,12 +354,12 @@ public class PlayerMidi {
 		Application.prt(" || compte = " + String.valueOf(compte) + " || ");
 		if (c.getTime() == 4 && !c.isPlayed() && compte % 4 != 0) {
 			if (compte % 13 == 1) {
-				return this.encadreValeurBasse(Harmonie.noteToVal(c.getSecondInChord()));
+				return this.encadreValeurBasse(Harmonie.noteToVal(c.getSecondFromFondamental()));
 			} else if ((compte % (alea2)) == 2) {
 				return this.encadreValeurBasse(Harmonie.noteToVal(c.getTierce()));
 
 			} else if (compte % 13 == 3) {
-				return this.encadreValeurBasse(Harmonie.noteToVal(c.getSecondInChord()));
+				return this.encadreValeurBasse(Harmonie.noteToVal(c.getSecondFromFondamental()));
 			} else if (compte % 13 == 4) {
 				return this.encadreValeurBasse(Harmonie.noteToVal(c.getQuinte()));
 			}
@@ -263,10 +369,10 @@ public class PlayerMidi {
 			}
 			int valGet = compte > alea2 ? (compte - alea2) : (alea2 - compte);
 			return this.encadreValeurBasse(valeur.get(valGet != 0 ? valGet % valeur.size() : valGet));
-		} else if (c.getTime()==2 && compte%2==0){
-			return this.encadreValeurBasse(Harmonie.noteToVal(c.getFondamentale()));
-		}  else if (c.getTime()==2 && compte%2==1){
-			return this.encadreValeurBasse(Harmonie.noteToVal(c.getQuinte()));
+		} else if (c.getTime() == 2 && compte % 2 == 0) {
+			return this.encadreValeurBasse(Harmonie.noteToVal(c.getSecondFromFondamental()));
+		} else if (c.getTime() == 2 && compte % 2 == 1) {
+			return this.encadreValeurBasse(Harmonie.noteToVal(c.getSecondFromFondamental()));
 		}
 		Application.printLigne();
 		Application.prt(
@@ -279,7 +385,7 @@ public class PlayerMidi {
 	 * @param grilleAccord Injection de la track de basse
 	 * @see #iA(int, Chord, Chord, Chord)
 	 */
-	public void injectBasse(Grille grilleAccord) {
+	public void injectBasse() {
 		try {
 
 			// // IMPORTANT ICI CREATION DE LA TRACK DE LA BASSE
@@ -288,14 +394,19 @@ public class PlayerMidi {
 			sequencer.setSequence(this.sequence);
 
 			sequencer.setTempoInBPM(this.tempo);
-			List<Chord> maListe = grilleAccord.getContenu();
+
+			/*
+			 * ICI on récupère le contenu de la grille
+			 */
+			List<Chord> maListe = getGrille().getContenu();
+
 			float newPos = 0;
 
 			for (int i = 0; i < maListe.size(); i++) {
 				Chord accEnCours = maListe.get(i);
 				Chord accSuivant = i == maListe.size() - 1 ? maListe.get(0) : maListe.get(i + 1);
 				Chord accPrecedent = i > 0 ? maListe.get(i - 1) : maListe.get(maListe.size() - 1);
-				Integer valeur = iA(i, accEnCours, accPrecedent, accSuivant);
+				Integer valeur = accEnCours.getFondamentale()!= null   ?  iA(i, accEnCours, accPrecedent, accSuivant) : accEnCours.getNotes().indexOf(0);
 				putANote(this.trackBasse, 7, 100, true, valeur, 4l / accEnCours.getTime(), newPos,
 						accEnCours.getTime());
 				Application.prt("valeur après iA() = " + valeur + " incrément = " + i + "\n");
