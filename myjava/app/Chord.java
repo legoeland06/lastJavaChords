@@ -32,6 +32,16 @@ public final class Chord implements Transposable<Chord> {
 		this.quality = quality;
 		this.basse = basse;
 	}
+	
+	/**
+	 * @return
+	 */
+	public Chord update() {
+		if (this.getNotes()==null || this.getNotes().size()==0) {
+			this.setNotes(Harmonie.chordToComponents(this));
+		}
+		return this;
+	}
 
 	/**
 	 * @param strChord

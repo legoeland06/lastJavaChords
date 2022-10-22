@@ -42,6 +42,22 @@ public enum Grille implements Transposable<Grille>{
 	private Grille() {
 	}
 
+	/**
+	 * @return
+	 */
+	public Chord getLastChord() {
+		return this.getContenuMap().get(this.getContenuMap().size()-1);
+	}
+	
+	/**
+	 * @return
+	 */
+	public Chord getFirstChord() {
+		return this.getContenuMap().get(0);
+	}
+	/**
+	 * @param newMap
+	 */
 	public void initMap(Map<Integer,Chord> newMap) {
 		this.contenuMap = new HashMap<Integer,Chord>();
 		this.contenuMap.putAll(newMap);
@@ -68,9 +84,10 @@ public enum Grille implements Transposable<Grille>{
 	 * ajoute un accord à la grille
 	 */
 	public void addChord(Chord c) {
-		c.setIndex(this.contenuMap.size());
-		this.contenu.add(c);
+//		c.setIndex(this.contenuMap.size());
+//		this.contenu.add(c);
 		this.contenuMap.put(this.contenuMap.size(), c);
+		c.setIndex(this.contenuMap.size());
 	}
 
 	/**

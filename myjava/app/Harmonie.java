@@ -553,7 +553,7 @@ public enum Harmonie {
 			});
 
 			receptacle.sort(Comparator.naturalOrder());
-			Application.prtln(receptacle.toString());
+//			Application.prtln(receptacle.toString());
 			return receptacle;
 
 		} else

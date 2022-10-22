@@ -7,6 +7,7 @@ import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 import javax.swing.JFrame;
@@ -37,6 +38,16 @@ public class Application {
 		count++;
 		return count;
 	}
+	
+	 /**
+	 * @param a
+	 * @param b
+	 * @param c
+	 * @return tab
+	 */
+	public static int[] getRange(int a,int b,int c){
+	        return IntTableau.INSTANCE.getRangeInt(a,b,c);
+	    }
 
 	/**
 	 * @param grille
@@ -369,8 +380,10 @@ public class Application {
 						goodListe.add(laQuinte);
 						goodListe.add(laSeptieme);
 						chordCreated.setNotes(goodListe);
-						grilleInstance.initMap(new HashMap<Integer,Chord>());
-						grilleInstance.addChord(chordCreated);
+						Map myMap= new HashMap();
+						myMap.put(0,chordCreated);
+						grilleInstance.initMap(myMap);
+						//grilleInstance.addChord(chordCreated);
 						prtln("L'accord a été créé : ");
 						prtln("Voulez-vous le jouer ? ");
 						jouerQuestion = question.next();
@@ -417,11 +430,14 @@ public class Application {
 
 					String[] rep = ((String[]) quest.nextLine().split(" "));
 
+					grilleInstance.initMap(new HashMap());
 					for (String elem : rep) {
 						Chord accord = new Chord();
 						accord = Harmonie.parseToChord(elem);
+						accord.update();
 						for (int j = 0; j < accord.getMulti(); j++) {
 							Chord receptacle = Harmonie.parseToChord(elem);
+							receptacle.update();
 							grilleInstance.addChord(receptacle);
 						}
 					}
@@ -432,7 +448,7 @@ public class Application {
 					while (quest.hasNext())
 						switch (quest.nextInt()) {
 						case 1:
-							playerInstance.init(grilleInstance, 80);
+							playerInstance.init(grilleInstance, 120);
 
 							playerInstance.play();
 
