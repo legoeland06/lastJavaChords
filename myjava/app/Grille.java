@@ -13,7 +13,7 @@ import java.util.Map;
 public enum Grille implements Transposable<Grille>{
 	
 	/**
-	 * 
+	 * Singleton
 	 */
 	INSTANCE;
 
@@ -86,8 +86,9 @@ public enum Grille implements Transposable<Grille>{
 	public void addChord(Chord c) {
 //		c.setIndex(this.contenuMap.size());
 //		this.contenu.add(c);
-		this.contenuMap.put(this.contenuMap.size(), c);
-		c.setIndex(this.contenuMap.size());
+		c.setIndex(this.getContenuMap().size());
+
+		this.contenuMap.put(c.getIndex(), c);
 	}
 
 	/**

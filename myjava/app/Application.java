@@ -251,7 +251,7 @@ public class Application {
 
 							default:
 								if (Harmonie.existeOrNo(fondaString)) {
-									fonda = chordFactoryInstance.createFondamental(fondaString);
+									fonda = chordFactoryInstance.createFondamentale(fondaString);
 									prtln("La nouvelle fondamentale " + fondaString + " est enregistrée.");
 									prtln("voulez pouvez la changer ou quitter ce menu en tapant q");
 									break;
@@ -448,7 +448,7 @@ public class Application {
 					while (quest.hasNext())
 						switch (quest.nextInt()) {
 						case 1:
-							playerInstance.init(grilleInstance, 120);
+							playerInstance.init(grilleInstance, 80);
 
 							playerInstance.play();
 

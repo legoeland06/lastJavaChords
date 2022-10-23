@@ -13,6 +13,10 @@ import java.util.Optional;
  *         Classe principale
  */
 public enum Harmonie {
+	
+	/**
+	 * Singleton
+	 */
 	INSTANCE;
 
 	private static ChordFactory chordFactory = ChordFactory.INSTANCE;
@@ -100,10 +104,8 @@ public enum Harmonie {
 	 * @return Boolean
 	 */
 	public static boolean existeOrNo(String note) {
-
 		if ((getListeDeNotes().stream().filter(c -> c.getName().contentEquals(note))).count() > 0)
 			return true;
-
 		return false;
 	}
 

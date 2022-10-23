@@ -8,6 +8,10 @@ package myjava.app;
 public class Note implements Transposable<Note> {
 
 	private String name;
+	private int nature;
+	public static enum listNature{
+		FONDAMENTALE,SECOND,TIERCE,QUARTE,QUINTE,SIXTE,SEPTIEME,OCTAVE,NEUVIEME
+	}
 	private int value;
 
 	/**
@@ -24,6 +28,14 @@ public class Note implements Transposable<Note> {
 		super();
 		this.name = name;
 		this.setValue(0);
+	}
+
+	public int getNature() {
+		return nature;
+	}
+
+	public void setNature(int nature) {
+		this.nature = nature;
 	}
 
 	/**

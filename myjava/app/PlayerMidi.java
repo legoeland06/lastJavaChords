@@ -6,10 +6,12 @@ import java.util.stream.Collectors;
 
 /**
  * @author Eric Bruneau
- *
  */
 public enum PlayerMidi {
 
+	/**
+	 * Singleton
+	 */
 	INSTANCE;
 
 	private Sequencer sequencer;
@@ -20,12 +22,12 @@ public enum PlayerMidi {
 	/**
 	 * 
 	 */
-	public float newPos = 0;
-	public float newPosBasse = 0;
+	private float newPos = 0;
+	private float newPosBasse = 0;
 	/**
 	 * 
 	 */
-	public int volumeNote = 100;
+	private int volumeNote = 100;
 
 	/**
 	 * @param grille
@@ -35,13 +37,26 @@ public enum PlayerMidi {
 		grille.setTempo(tempo);
 		this.setGrille(grille);
 		inject();
-//		injectB();
 	}
 
+	/**
+	 * @return
+	 */
+	public float getDecallage() {
+		int choix = (int) Math.round(Math.random() * 10 + 1);
+		return choix >= 5 ? Float.valueOf(2 / 3) : 0;
+	}
+
+	/**
+	 * @return
+	 */
 	public float getNewPosBasse() {
 		return newPosBasse;
 	}
 
+	/**
+	 * @param newPosBasse
+	 */
 	public void setNewPosBasse(float newPosBasse) {
 		this.newPosBasse = newPosBasse;
 	}
@@ -168,24 +183,22 @@ public enum PlayerMidi {
 	 * @param veloce
 	 * @param played
 	 * @param valeurNote
-	 * @param _time
+	 * @param decallage
 	 * @param newPos
 	 * @param timming
-	 * 
 	 * @see #injectBasse()
-	 * @see #injectSeq()
 	 */
-	public void putANote(Track track, int channel, int veloce, boolean played, int valeurNote, Long _time, float newPos,
-			Integer timming) {
+	public void putANote(Track track, int channel, int veloce, boolean played, int valeurNote, double decallage,
+			float newPos, Integer timming) {
 		Integer velocite = played ? veloce : 0;
 		try {
 
 			MidiEvent msgOn = this.makeEvent(144, channel, valeurNote + 36, velocite,
-					Math.round(newPos * (3200 / this.tempo)));
+					(int) Math.round(Double.valueOf(newPos + decallage) * (3200d / this.tempo)));
 			MidiEvent msgOff = this.makeEvent(128, channel, valeurNote + 36, velocite,
-					Math.round((newPos + 8 / timming) * (3200 / this.tempo)));
-			track.add(msgOn);
-			track.add(msgOff);
+					(int) Math.round((Double.valueOf(newPos + decallage) + 7 / timming) * (3200d / this.tempo)));
+			this.getTrack().add(msgOn);
+			this.getTrack().add(msgOff);
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -205,8 +218,7 @@ public enum PlayerMidi {
 	 */
 	public void inject() {
 		try {
-			
-			
+
 			this.setSequencer(MidiSystem.getSequencer());
 			this.sequencer.open();
 			this.setSequence(new Sequence(Sequence.SMPTE_24, 4));
@@ -215,23 +227,19 @@ public enum PlayerMidi {
 			this.setNewPos(0);
 			this.setNewPosBasse(0);
 			this.setVolumeNote(100);
-			
+
 			// IMPORTANT ICI CREATION DE LA TRACK DES ACCORDS
 			this.setTrack(this.sequence.createTrack());
 			this.setTrackBasse(this.sequence.createTrack());
-			
+
 			this.sequencer.setSequence(this.getSequence());
 			this.sequencer.setTempoInBPM(this.getTempo());
 			Map<Integer, Chord> myMap = new HashMap<Integer, Chord>();
 
 			myMap = this.getGrille().getContenuMap();
 
-//			myMap.forEach((index, chord) -> {
-//				Application.prtln(index + " " + chord);
-//			});
-
 			myMap.forEach((index, chord) -> {
-
+				float decallage = this.getDecallage();
 				Chord accPrecedent = index > 0 ? this.getPrevChord(chord) : this.getGrille().getLastChord();
 				Chord accSuivant = index < getGrille().getContenuMap().size() ? this.getNextChord(chord)
 						: this.getGrille().getFirstChord();
@@ -239,35 +247,37 @@ public enum PlayerMidi {
 						+ chord.getBasse().getName())
 						.contentEquals(accPrecedent.getFondamentale().getName()
 								+ accPrecedent.getQuality().getQualityName() + accPrecedent.getBasse().getName());
-				chord.setPlayed((!commeLePrecedent) 
-						|| index % Math.round(Math.random() * 21 + 1) == 0
-				|| index % Math.round(Math.random() * 13 + 1) == 0);
+
+				chord.setPlayed((!commeLePrecedent) || index % Math.round(Math.random() * 13 + 1) == 0);
+
+				/*
+				 * Gestion de la basse
+				 */
 				Integer valeur = chord.getFondamentale() != null ? iA(index, chord, accPrecedent, accSuivant)
 						: chord.getNotes().get(0).getValue();
-				
+
 				putANote(this.getTrackBasse(), 7, 100, true, valeur, 4l / chord.getTime(), this.getNewPosBasse(),
 						chord.getTime());
-//				Application.prt("valeur après iA() = " + valeur + " incrément = " + index + "\n");
-				
-				this.setNewPosBasse(this.getNewPosBasse() + (8l / chord.getTime()));
 
+				this.setNewPosBasse(this.getNewPosBasse() + (8f / chord.getTime()));
+				/* fin de gestion de la basse */
+
+				/*
+				 * Gestion des accords plaqués
+				 */
 				if (chord.isPlayed()) {
 					List<Integer> valNoteToPlay = Harmonie.explodeChord(Harmonie.chordToValues(chord));
 					valNoteToPlay.forEach((v) -> {
 						if (v <= 12)
 							v += 24;
-						this.setNewPos(
-								this.getNewPos() + (float) valNoteToPlay.indexOf(v) / (8 * valNoteToPlay.size()));
 
-						this.putANote(this.getTrack(), 4, this.getVolumeNote(), chord.isPlayed(), v,
-								4l / chord.getTime(), this.getNewPos(), chord.getTime());
-						this.setNewPos(
-								this.getNewPos() - (float) valNoteToPlay.indexOf(v) / (8 * valNoteToPlay.size()));
-
+						this.putANote(this.getTrack(), 4, this.getVolumeNote(), chord.isPlayed(), v, (double) decallage,
+								this.getNewPos(), chord.getTime());
 					});
 
 				}
-				this.setNewPos(this.getNewPos() + (8l / chord.getTime()));
+				this.setNewPos(this.getNewPos() + (8f / chord.getTime()));
+				/* fin de gestion des accords */
 
 			});
 			while (true) {
@@ -386,9 +396,6 @@ public enum PlayerMidi {
 		} else if (chord.getTime() == 2 && compte % 2 == 1) {
 			return this.encadreValeurBasse(Harmonie.noteToVal(chord.getSecondFromFondamental()));
 		}
-//		Application.printLigne();
-//		Application.prt(
-//				Harmonie.noteToVal(Harmonie.chordToComponents(chord).get(compte % Harmonie.chordToComponents(chord).size())));
 
 		return Harmonie.noteToVal(chord.getFondamentale());
 	}
