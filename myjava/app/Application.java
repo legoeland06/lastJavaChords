@@ -22,9 +22,6 @@ import javax.swing.JPanel;
  */
 public class Application {
 
-	/**
-	 * compteur pour les ligne imprimées avec prt()
-	 */
 	public static int count = 0;
 	private static char LINE = '-';
 
@@ -33,7 +30,7 @@ public class Application {
 	 * pouvoir aligner un certain nombre d'objets sur une ligne et prévoir un retour
 	 * à la ligne au bout de n fois On utilisera le modulo n
 	 * 
-	 * @param objectToStringOut : voilà
+	 * @param objectToStringOut
 	 * @return count incremented
 	 */
 	public static Integer prt(Object objectToStringOut) {
@@ -43,9 +40,9 @@ public class Application {
 	}
 	
 	 /**
-	 * @param a int
-	 * @param b int
-	 * @param c int
+	 * @param a
+	 * @param b
+	 * @param c
 	 * @return tab
 	 */
 	public static int[] getRange(int a,int b,int c){

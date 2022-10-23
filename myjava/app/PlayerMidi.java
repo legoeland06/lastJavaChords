@@ -40,7 +40,7 @@ public enum PlayerMidi {
 	}
 
 	/**
-	 * @return choix
+	 * @return
 	 */
 	public float getDecallage() {
 		int choix = (int) Math.round(Math.random() * 10 + 1);
@@ -48,7 +48,7 @@ public enum PlayerMidi {
 	}
 
 	/**
-	 * @return newPosBasse
+	 * @return
 	 */
 	public float getNewPosBasse() {
 		return newPosBasse;
@@ -150,7 +150,7 @@ public enum PlayerMidi {
 	}
 
 	/**
-	 * @return newPos
+	 * @return
 	 */
 	public float getNewPos() {
 		return newPos;
@@ -186,6 +186,7 @@ public enum PlayerMidi {
 	 * @param decallage
 	 * @param newPos
 	 * @param timming
+	 * @see #injectBasse()
 	 */
 	public void putANote(Track track, int channel, int veloce, boolean played, int valeurNote, double decallage,
 			float newPos, Integer timming) {
@@ -344,7 +345,7 @@ public enum PlayerMidi {
 	}
 
 	/**
-	 * @param c
+	 * @param Chord c
 	 * @return the next chord in the grid
 	 */
 	public Chord getNextChord(Chord c) {
@@ -352,7 +353,7 @@ public enum PlayerMidi {
 	}
 
 	/**
-	 * @param c
+	 * @param Chord c
 	 * @return the prev chrod in the grid
 	 */
 	public Chord getPrevChord(Chord c) {
@@ -364,7 +365,7 @@ public enum PlayerMidi {
 	 * @param chord
 	 * @param accPrecedant
 	 * @param accSuivant
-	 * @return int
+	 * @return
 	 */
 	public Integer iA(int compte, Chord chord, Chord accPrecedant, Chord accSuivant) {
 
@@ -397,6 +398,53 @@ public enum PlayerMidi {
 		}
 
 		return Harmonie.noteToVal(chord.getFondamentale());
+	}
+
+	/**
+	 * @param grilleAccord Injection de la track de basse
+	 * @see #iA(int, Chord, Chord, Chord)
+	 */
+	public void injectBasse() {
+		try {
+
+			// // IMPORTANT ICI CREATION DE LA TRACK DE LA BASSE
+			this.trackBasse = this.sequence.createTrack();
+
+			sequencer.setSequence(this.sequence);
+
+			sequencer.setTempoInBPM(this.tempo);
+
+			/*
+			 * ICI on récupère le contenu de la grille
+			 */
+			List<Chord> maListe = getGrille().getContenu();
+
+			this.setNewPos(0);
+
+			for (int i = 0; i < maListe.size(); i++) {
+				Chord accEnCours = maListe.get(i);
+				Chord accSuivant = i == maListe.size() - 1 ? maListe.get(0) : maListe.get(i + 1);
+				Chord accPrecedent = i > 0 ? maListe.get(i - 1) : maListe.get(maListe.size() - 1);
+				Integer valeur = accEnCours.getFondamentale() != null ? iA(i, accEnCours, accPrecedent, accSuivant)
+						: accEnCours.getNotes().indexOf(0);
+				putANote(this.trackBasse, 7, 100, true, valeur, 4l / accEnCours.getTime(), newPos,
+						accEnCours.getTime());
+				Application.prt("valeur après iA() = " + valeur + " incrément = " + i + "\n");
+				newPos += 8l / accEnCours.getTime();
+			}
+
+			while (true) {
+				// Exit the program when sequencer has stopped playing.
+				if (!sequencer.isRunning()) {
+					sequencer.stop();
+					break;
+				}
+			}
+		} catch (Exception e) {
+			System.out.println("OOPPS: " + e.getMessage());
+			e.printStackTrace();
+			System.exit(-1);
+		}
 	}
 
 	/**
@@ -439,7 +487,7 @@ public enum PlayerMidi {
 	 * @param velocity
 	 * @param tick
 	 * @return MidiEvent
-	 * @see #putANote(Track, int, int, boolean, int, double, float, Integer)
+	 * @see #putANote(Track, int, int, boolean, int, Long, float, Integer)
 	 */
 	public MidiEvent makeEvent(int command, int channel, int note, int velocity, int tick) {
 
