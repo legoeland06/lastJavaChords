@@ -60,7 +60,7 @@ public enum Harmonie {
 			{ "13#11", "0:4:7:10:18:21:" }, { "M7add13", "0:4:7:9:11:14:" } };
 
 	/**
-	 * @return List<Note> Cette méthode retourne une liste composée des notes de la
+	 * @return listeDeNote List of Note Cette méthode retourne une liste composée des notes de la
 	 *         constante NOTE_VAL_DICT
 	 */
 	public static List<Note> getListeDeNotes() {
@@ -85,7 +85,7 @@ public enum Harmonie {
 	}
 
 	/**
-	 * @return List<Note> méthode inutile pour le moment receptacle va devenir une
+	 * @return receptacle List of Note méthode inutile pour le moment receptacle va devenir une
 	 *         liste de Note en commençant par les bémols et les dièzes et en
 	 *         finissant par les notes simples
 	 */
@@ -169,27 +169,22 @@ public enum Harmonie {
 	}
 
 	/**
-	 * @return Note : renvoi la note suivante à <note> dans l'arpège correspondant à
-	 *         l'accord <c>
 	 * 
 	 * @param c
 	 * @param note
-	 * @return Note
+	 * @return nextNote
 	 */
 	public static Note getNextNoteInArpege(Chord c, Note note) {
 		List<Note> noteList = chordToComponents(c);
 		int noteIndexInList = noteList.indexOf(note);
-		Note prevNote = noteList.get(noteList.size() % (noteIndexInList + 1));
-		return prevNote;
+		Note nextNote = noteList.get(noteList.size() % (noteIndexInList + 1));
+		return nextNote;
 	}
 
 	/**
-	 * @return Note : renvoi la note précédente à <note> dans l'arpège correspondant
-	 *         à l'accord <c>
-	 * 
 	 * @param c
 	 * @param note
-	 * @return Note
+	 * @return prevNote
 	 */
 	public static Note getPrevNoteInArpege(Chord c, Note note) {
 		List<Note> noteList = chordToComponents(c);
@@ -199,9 +194,9 @@ public enum Harmonie {
 	}
 
 	/**
-	 * @return List<Note> componentsOfChord
+	 * @return componentsOfChord List of notes componentsOfChord
 	 * 
-	 *         methode qui renvoi un Objet List<Note> il transforme un accord vers
+	 *         methode qui renvoi un Objet List of notes il transforme un accord vers
 	 *         une liste d'objets Note
 	 * 
 	 * @param chord
@@ -219,9 +214,9 @@ public enum Harmonie {
 	}
 
 	/**
-	 * @return List<Integer> valuesChordIntList
+	 * @return valuesChordIntList List of int valuesChordIntList
 	 *
-	 *         méthode qui renvoi un Objet List<Integer>
+	 *         méthode qui renvoi un Objet List of int
 	 * 
 	 *         Transforme un <b>accord</b> précis (ex Cm7b5/D) en <b>StringListe de
 	 *         ecartNoteInteger</b> sans prendre en compte la basse
@@ -508,7 +503,7 @@ public enum Harmonie {
 	}
 
 	/**
-	 * @return Optional<List<String>>
+	 * @return Optional
 	 */
 	public static Optional<List<String>> listeQualitiesNameSorted() {
 		List<String> listeSorted = new ArrayList<>();

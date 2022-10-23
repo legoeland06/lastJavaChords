@@ -34,7 +34,7 @@ public final class Chord implements Transposable<Chord> {
 	}
 	
 	/**
-	 * @return
+	 * @return this : Chord
 	 */
 	public Chord update() {
 		if (this.getNotes()==null || this.getNotes().size()==0) {
@@ -93,7 +93,7 @@ public final class Chord implements Transposable<Chord> {
 	}
 
 	/**
-	 * @param fondamentale
+	 * @param fondamentale : assigne cette note à la fondaentale de l'accord
 	 */
 	public void setFondamentale(Note fondamentale) {
 		this.fondamentale = fondamentale;
